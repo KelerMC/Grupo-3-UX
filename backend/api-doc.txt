@@ -1,0 +1,49 @@
+|| Ver datos de los estudiantes ||
+- Ruta: "https://ihc-proyecto01.onrender.com/estudiantes"
+- Método: GET
+- Parámetros: Ninguno
+- Cuerpo de la solicitud: Ninguno
+
+
+
+|| Registrar estudiante ||
+- Ruta: "https://ihc-proyecto01.onrender.com/estudiantes/"
+- Método: POST
+- Parámetros: Ninguno
+- Cuerpo de la solicitud:
+	{
+		"dni": "dni <String>">, 
+		"nombre": "nombre string",
+		"apellido_pat": "apellido paterno <String>", 
+		"apellido_mat": "apellido materno <String>", 
+		"telefono": "telefono <String>"
+	}
+
+
+
+|| Modificar datos de los estudiantes ||
+- Ruta: "https://ihc-proyecto01.onrender.com/estudiantes/:dni"
+- Método: PUT
+- Parámetros: dni (dni actual del estudiante a modificar)
+- Cuerpo de la solicitud:
+	{
+		"nuevoDni": "nuevoDni <String>">, 
+		"nombre": "nombre string",
+		"apellido_pat": "apellido paterno <String>", 
+		"apellido_mat": "apellido materno <String>", 
+		"telefono": "telefono <String>"
+	}
+
+
+
+|| Modificar telefono ||
+- Ruta: "https://ihc-proyecto01.onrender.com/estudiantes/modTelefono"
+- Método: PATCH
+- Parámetros: Ninguno
+- Cuerpo de la solicitud:
+	{
+		"telefono": "telefono actual <String>">, 
+		"nuevoTelefono": "telefono nuevo <String>"
+	}
+
+
