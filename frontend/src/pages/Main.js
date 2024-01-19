@@ -1,24 +1,58 @@
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { Helmet } from 'react-helmet';
-import React, { Component } from 'react';
+import { API_URL } from '../config.js';
 import '../styles/Main.css';
-class Main extends Component {
-    render() {
-        return (
-            <div className='dashboard-contenedor'>
-                <Helmet>
-                    <title>Dashboard Modulo Cliente</title>
-                </Helmet>
-                <h1 style={{ textAlign: 'center' }}>Bienvenido al Sistema de Estudiantes y Calificaciones</h1>                
-                <h2 style={{ textAlign: 'center' }}>¿Cómo utilizar este módulo?</h2>
-                <ul style={{ textAlign: 'center', listStyleType: 'none', padding: 0 }}>
-                    <li style={{ marginLeft: '20px' }}>1. Registra nuevos clientes.</li>
-                    <li style={{ marginLeft: '20px' }}>2. Realiza búsquedas de clientes existentes.</li>
-                    <li style={{ marginLeft: '20px' }}>3. Gestiona las líneas de clientes.</li>
-                    <li style={{ marginLeft: '20px' }}>4. Vistas de estado de Cuenta.</li>
-                </ul>                
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+
+const Main = () => {
+  const [userData, setUserData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const correo = localStorage.getItem('correo');
+        const response = await axios.get(`${API_URL}/estudiantes/${correo}`);
+        setUserData(response.data);
+      } catch (error) {
+        setError('Error al obtener datos del estudiante');
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);  // El array vacío asegura que useEffect solo se ejecute una vez, similar a componentDidMount
+
+  return (
+    <div className='dashboard-contenedor'>
+      <Helmet>
+        <title>Dashboard Modulo Cliente</title>
+      </Helmet>      
+        <h1 style={{ textAlign: 'center' }}>Bienvenido al Sistema de Estudiantes y Calificaciones</h1>
+        <div className="contenedor-perfil">
+        {userData && (
+            <div>
+        <div>
+            <AccountCircleIcon fontSize="100" className="icono-perfil" />
+        </div>
+            <h2 style={{ textAlign: 'center' }}>Datos del Estudiante:</h2>
+            <p style={{ textAlign: 'center' }}>Correo: {userData.email}</p>
+            <p style={{ textAlign: 'center' }}>DNI: {userData.dni}</p>
+            <p style={{ textAlign: 'center' }}>Nombre: {userData.nombre}</p>
+            <p style={{ textAlign: 'center' }}>Apellido Paterno: {userData.apellido_pat}</p>
+            <p style={{ textAlign: 'center' }}>Apellido Materno: {userData.apellido_mat}</p>
+            <p style={{ textAlign: 'center' }}>Telefono: {userData.telefono}</p>
             </div>
-        );
-    }
-}
+        )}
+      </div>
+    </div>
+  );
+};
 
 export default Main;

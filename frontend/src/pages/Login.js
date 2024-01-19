@@ -15,13 +15,12 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {    
-      const response = await axios.post(`${API_URL}/estudiantes/login`, { email: correo, password: contrasena });
-      console.log(response);
+      const response = await axios.post(`${API_URL}/estudiantes/login`, { email: correo, password: contrasena });      
       if (response.data.succes === true) {
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('correo', correo);
         setIsLoggedIn(true);
-        navigate('/Main', { replace: true }); // Utiliza replace para reemplazar la ruta actual
+        navigate('/Main', { replace: true });
       } else {
         setError('Credenciales incorrectas');
       }
