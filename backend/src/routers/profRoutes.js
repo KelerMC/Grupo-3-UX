@@ -15,6 +15,19 @@ router.get("/", (req, res) => {
     });
 });
 
+// Ver datos de un profesor
+router.get("/:email", (req, res) => {
+  const { email } = req.params;
+  ProfModel.findOne({ email: email })
+    .select({ _id: 0, __v: 0, password: 0 })
+    .then((user) => {
+      res.json(user);
+    })
+    .catch((err) => {
+      res.json({ error: "Database connection error" });
+    });
+});
+
 // Registrar profesor
 router.post("/", (req, res) => {
   const { dni, nombre, apellido_pat, apellido_mat, telefono, email, password } =

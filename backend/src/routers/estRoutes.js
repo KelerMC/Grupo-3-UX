@@ -6,9 +6,22 @@ const router = express.Router();
 // Ver datos de los estudiantes
 router.get("/", (req, res) => {
   EstModel.find()
-    .select({ _id: 0, __v: 0, password: 0, isDelegado: 0 })
+    .select({ _id: 0, __v: 0, password: 0 })
     .then((list) => {
       res.send(list);
+    })
+    .catch((err) => {
+      res.json({ error: "Database connection error" });
+    });
+});
+
+// Ver datos de un estudiante
+router.get("/:email", (req, res) => {
+  const { email } = req.params;
+  EstModel.findOne({ email: email })
+    .select({ _id: 0, __v: 0, password: 0 })
+    .then((user) => {
+      res.json(user);
     })
     .catch((err) => {
       res.json({ error: "Database connection error" });
