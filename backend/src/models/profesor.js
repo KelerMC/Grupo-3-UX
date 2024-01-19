@@ -1,6 +1,6 @@
 let mongoose = require("mongoose");
 
-let estudianteSchema = new mongoose.Schema({
+let profesorSchema = new mongoose.Schema({
   dni: { type: String, required: true, unique: true },
   nombre: String,
   apellido_pat: String,
@@ -8,7 +8,6 @@ let estudianteSchema = new mongoose.Schema({
   telefono: String,
   email: String,
   password: String,
-  isDelegado: Boolean,
 });
 
-module.exports = mongoose.model("Estudiante", estudianteSchema);
+module.exports = mongoose.model("Profesor", profesorSchema);

@@ -1,12 +1,12 @@
-let EstModel = require("../models/estudiante");
+let ProfModel = require("../models/profesor");
 const express = require("express");
 
 const router = express.Router();
 
-// Ver datos de los estudiantes
+// Ver datos de los profesores
 router.get("/", (req, res) => {
-  EstModel.find()
-    .select({ _id: 0, __v: 0, password: 0, isDelegado: 0 })
+  ProfModel.find()
+    .select({ _id: 0, __v: 0, password: 0 })
     .then((list) => {
       res.send(list);
     })
@@ -15,19 +15,11 @@ router.get("/", (req, res) => {
     });
 });
 
-// Registrar estudiante
+// Registrar profesor
 router.post("/", (req, res) => {
-  const {
-    dni,
-    nombre,
-    apellido_pat,
-    apellido_mat,
-    telefono,
-    email,
-    password,
-    isDelegado,
-  } = req.body;
-  const newEstudiante = new EstModel({
+  const { dni, nombre, apellido_pat, apellido_mat, telefono, email, password } =
+    req.body;
+  const newProfesor = new ProfModel({
     dni: dni,
     nombre: nombre,
     apellido_pat: apellido_pat,
@@ -35,24 +27,22 @@ router.post("/", (req, res) => {
     telefono: telefono,
     email: email,
     password: password,
-    isDelegado: isDelegado,
   });
-  newEstudiante
+  newProfesor
     .save()
     .then((doc) => {
-      res.json({ msg: "Estudiante registrado correctamente" });
+      res.json({ msg: "Profesor registrado correctamente" });
     })
     .catch((err) => {
       res.json({ error: "Database connection error" });
     });
 });
 
-// Modificar datos de los estudiantes
+// Modificar datos de los profesores
 router.put("/:dni", (req, res) => {
   const { dni } = req.params;
-  const { nuevoDni, nombre, apellido_pat, apellido_mat, telefono, isDelegado } =
-    req.body;
-  EstModel.updateOne(
+  const { nuevoDni, nombre, apellido_pat, apellido_mat, telefono } = req.body;
+  ProfModel.updateOne(
     { dni: dni },
     {
       $set: {
@@ -61,7 +51,6 @@ router.put("/:dni", (req, res) => {
         apellido_pat: apellido_pat,
         apellido_mat: apellido_mat,
         telefono: telefono,
-        isDelegado: isDelegado,
       },
     }
   )
@@ -73,25 +62,10 @@ router.put("/:dni", (req, res) => {
     });
 });
 
-// Modificar telefono
-router.patch("/modTelefono", (req, res) => {
-  const { telefono, nuevoTelefono } = req.body;
-  EstModel.updateOne(
-    { telefono: telefono },
-    { $set: { telefono: nuevoTelefono } }
-  )
-    .then((result) => {
-      res.json({ msg: "Telefono modificado correctamente" });
-    })
-    .catch((err) => {
-      res.json({ msg: "Database connection error" });
-    });
-});
-
 // Login
 router.get("/login", (req, res) => {
   const { email, password } = req.body;
-  EstModel.findOne({ email: email, password: password })
+  ProfModel.findOne({ email: email, password: password })
     .then((usuarioEncontrado) => {
       if (usuarioEncontrado) {
         res.json({ succes: true, msg: "Inicio de sesion exitoso" });
