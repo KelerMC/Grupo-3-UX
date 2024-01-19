@@ -17,6 +17,7 @@ body {
     z-index: 1; 
     background-color: #fff; 
     line-height: 3;
+    margin-top: 400px;
 }
 
 .fondo-celeste {
@@ -28,3 +29,51 @@ body {
     background-color: #2E5ED2; 
     z-index: 0; 
 }
+
+.titulo-Sistema{
+    margin-left:250px;
+}
+
+.titulo-Iniciar{
+    margin-left:315px;
+}
+
+.lbl-correo{
+    margin-left: 200px;
+}
+
+.lbl-contrasena{
+    margin-left:200px;
+}
+
+.campo-correo{
+    margin-left:50px;
+}
+
+.campo-contrasena{
+    margin-left:100px;
+}
+
+
+.btn-IniciarSesion {
+  font-size: 16px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  margin: 10px 0;
+  cursor: pointer;
+  margin-left:350px;
+}
+
+.text-danger{
+    margin-left: 325px; 
+    margin-top: -10px;
+    color:red;
+
+}
+
+

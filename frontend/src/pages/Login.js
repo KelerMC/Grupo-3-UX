@@ -35,38 +35,40 @@ export default function Login() {
             <div className="fondo-celeste"></div>
             <div className="login-contenedor">            
             <div className="row justify-content-center">
-                <div className="col-md-6">                    
-                    <h1 className="text-center mb-4">Sistema de Estudiantes</h1>
-                    <h1 className="text-center mb-4">Iniciar Sesión</h1>
-                    {error && <p className="text-danger">{error}</p>}
+                <div className="box-contenido">                    
+                    <h1 className="titulo-Sistema">Sistema de Estudiantes</h1>
+                    <h1 className="titulo-Iniciar">Iniciar Sesión</h1>
+                    
                     <form onSubmit={handleLogin}>
                         <div className="mb-3">
-                            <label htmlFor="correo" className="form-label">
+                            <label htmlFor="correo" className="lbl-correo">
                                 Correo Electrónico:
                             </label>
                             <input
                                 type="email"
-                                className="form-control"
+                                className="campo-correo"
                                 id="correo"
                                 value={correo}
                                 onChange={(e) => setCorreo(e.target.value)}
                             />
                         </div>
                         <div className="mb-3">
-                            <label htmlFor="contrasena" className="form-label">
+                            <label htmlFor="contrasena" className="lbl-contrasena">
                                 Contraseña:
                             </label>
                             <input
                                 type="password"
-                                className="form-control"
+                                className="campo-contrasena"
                                 id="contrasena"
                                 value={contrasena}
                                 onChange={(e) => setContrasena(e.target.value)}
                             />
                         </div>
-                        <button type="submit" className="btn btn-primary">
+                        <button type="submit" className="btn-IniciarSesion">
                             Iniciar Sesión
                         </button>
+
+                        {error && <p className="text-danger">{error}</p>}
                     </form>
                 </div>
             </div>
