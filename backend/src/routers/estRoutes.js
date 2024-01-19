@@ -89,7 +89,7 @@ router.patch("/modTelefono", (req, res) => {
 });
 
 // Login
-router.get("/login", (req, res) => {
+router.post("/login", (req, res) => {
   const { email, password } = req.body;
   EstModel.findOne({ email: email, password: password })
     .then((usuarioEncontrado) => {

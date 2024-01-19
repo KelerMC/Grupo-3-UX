@@ -63,7 +63,7 @@ router.put("/:dni", (req, res) => {
 });
 
 // Login
-router.get("/login", (req, res) => {
+router.post("/login", (req, res) => {
   const { email, password } = req.body;
   ProfModel.findOne({ email: email, password: password })
     .then((usuarioEncontrado) => {
