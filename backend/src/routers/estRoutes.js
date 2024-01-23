@@ -3,7 +3,7 @@ const express = require("express");
 
 const router = express.Router();
 
-// Ver datos de los estudiantes
+// Ver datos de todos los estudiantes
 router.get("/", (req, res) => {
   EstModel.find()
     .select({ _id: 0, __v: 0, password: 0 })
@@ -28,10 +28,10 @@ router.get("/:email", (req, res) => {
     });
 });
 
-// Registrar estudiante
+// Registrar un nuevo estudiante
 router.post("/", (req, res) => {
   const {
-    dni,
+    codigo,
     nombre,
     apellido_pat,
     apellido_mat,
@@ -41,7 +41,7 @@ router.post("/", (req, res) => {
     isDelegado,
   } = req.body;
   const newEstudiante = new EstModel({
-    dni: dni,
+    codigo: codigo,
     nombre: nombre,
     apellido_pat: apellido_pat,
     apellido_mat: apellido_mat,
@@ -60,16 +60,42 @@ router.post("/", (req, res) => {
     });
 });
 
-// Modificar datos de los estudiantes
-router.put("/:dni", (req, res) => {
-  const { dni } = req.params;
-  const { nuevoDni, nombre, apellido_pat, apellido_mat, telefono, isDelegado } =
-    req.body;
+// Ingresar notas de un estudiante
+router.post("/notas/:email", (req, res) => {
+  const { email } = req.params;
+  const { nota_ec, nota_ep, nota_ef } = req.body;
+  promedio = (nota_ec + nota_ep + nota_ef) / 3;
+  promedio = Math.round(promedio);
+
   EstModel.updateOne(
-    { dni: dni },
+    { email: email },
     {
       $set: {
-        dni: nuevoDni,
+        nota_ec: nota_ec,
+        nota_ep: nota_ep,
+        nota_ef: nota_ef,
+        promedio: promedio,
+      },
+    }
+  )
+    .then(() => {
+      res.json({ msg: "Notas ingresadas correctamente" });
+    })
+    .catch(() => {
+      res.json({ error: "Database connection error" });
+    });
+});
+
+// Modificar datos de un estudiante
+router.put("/:email", (req, res) => {
+  const { email } = req.params;
+  const { codigo, nombre, apellido_pat, apellido_mat, telefono, isDelegado } =
+    req.body;
+  EstModel.updateOne(
+    { email: email },
+    {
+      $set: {
+        codigo: codigo,
         nombre: nombre,
         apellido_pat: apellido_pat,
         apellido_mat: apellido_mat,
@@ -86,13 +112,10 @@ router.put("/:dni", (req, res) => {
     });
 });
 
-// Modificar telefono
+// Modificar telefono de un estudiante
 router.patch("/modTelefono", (req, res) => {
-  const { telefono, nuevoTelefono } = req.body;
-  EstModel.updateOne(
-    { telefono: telefono },
-    { $set: { telefono: nuevoTelefono } }
-  )
+  const { email, nuevoTelefono } = req.body;
+  EstModel.updateOne({ email: email }, { $set: { telefono: nuevoTelefono } })
     .then((result) => {
       res.json({ msg: "Telefono modificado correctamente" });
     })
