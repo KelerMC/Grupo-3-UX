@@ -6,18 +6,18 @@ body {
 }
 
 .login-contenedor {    
-    flex-direction: column;    
-    justify-content: center;
-    padding: 10px;
-    border-radius: 20px;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-    max-width: 800px;    
-    margin: 10% auto;
+    justify-content: space-between; 
+    align-items: center;
+    padding: 10px;    
+    max-width: 80%;
+    margin: 10% auto;    
     position: relative; 
-    z-index: 1; 
-    background-color: #fff; 
+    z-index: 1;     
     line-height: 3;
-    margin-top: 400px;
+    display: flex;            
+    flex-direction: column;
+    gap: 80px;
+    flex-direction: row;
 }
 
 .fondo-celeste {
@@ -30,50 +30,60 @@ body {
     z-index: 0; 
 }
 
-.titulo-Sistema{
-    margin-left:250px;
+.titulo-Sistema {
+    margin-left: 250px;
 }
 
-.titulo-Iniciar{
-    margin-left:315px;
+.titulo-Iniciar {
+    margin-left: 315px;
 }
 
-.lbl-correo{
+.lbl-correo {
     margin-left: 200px;
 }
 
-.lbl-contrasena{
-    margin-left:200px;
+.lbl-contrasena {
+    margin-left: 200px;
 }
 
-.campo-correo{
-    margin-left:50px;
+.campo-correo {
+    margin-left: 50px;
 }
 
-.campo-contrasena{
-    margin-left:100px;
+.campo-contrasena {
+    margin-left: 100px;
 }
-
 
 .btn-IniciarSesion {
-  font-size: 16px;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  margin: 10px 0;
-  cursor: pointer;
-  margin-left:350px;
+    font-size: 16px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin: 10px 0;
+    cursor: pointer;
+    margin-left: 350px;
 }
 
-.text-danger{
+.text-danger {
     margin-left: 325px; 
     margin-top: -10px;
-    color:red;
-
+    color: red;
 }
 
+.contenedor-horizontal {
+    display: flex;
+    justify-content: space-around;
+    border-radius: 30px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    background-color: #fff; 
+    max-width: 800px;
+}
 
+.box-contenedor {
+    width: 800px;
+    margin: 10px;
+}

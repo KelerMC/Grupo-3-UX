@@ -5,6 +5,8 @@ import Sidebar from "./components/Sidebar";
 import Main from "./pages/Main";
 import { Helmet } from "react-helmet";
 import Login from "./pages/Login.js";
+import LoginEst from "./pages/LoginEst.js";
+import LoginProf from "./pages/LoginEst.js";
 import Editar from "./pages/Editar.js";
 import ReporteEvaluaciones from "./pages/ReporteEvaluaciones.js";
 import Reclamo from "./pages/Reclamos.js";
@@ -63,6 +65,9 @@ function App() {
           <title>Sistema Evaluaciones</title>
         </Helmet>
         <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/login-profesor" element={<LoginProf />} />
+        <Route path="/login-estudiante" element={<LoginEst />} />
           <Route
             path="/"
             element={
