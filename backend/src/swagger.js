@@ -10,7 +10,7 @@ const options = {
         "API de administración de datos personales, notas y reclamos del curso de IHC",
     },
   },
-  apis: ["src/routes/estRoutes.js", "src/routes/profRoutes.js"],
+  apis: ["src/routes/*.js"],
   showCommonExtensions: false,
 };
 

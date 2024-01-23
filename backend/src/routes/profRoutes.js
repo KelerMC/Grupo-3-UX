@@ -83,7 +83,7 @@ router.get("/:email", profController.getProfesor);
  *             schema:
  *               type: object
  *               properties:
- *                 succes:
+ *                 success:
  *                   type: boolean
  */
 router.post("/login", profController.login);

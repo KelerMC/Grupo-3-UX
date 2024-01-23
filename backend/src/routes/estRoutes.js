@@ -132,7 +132,7 @@ router.get("/:email", estController.getEstudiante);
  *               properties:
  *                 msg:
  *                   type: string
- *                   example: Estudiante registrado correctamente.
+ *                   example: Estudiante registrado correctamente
  */
 router.post("/", estController.createEstudiante);
 
@@ -173,7 +173,7 @@ router.post("/", estController.createEstudiante);
  *               properties:
  *                 msg:
  *                   type: string
- *                   example: Notas ingresadas correctamente.
+ *                   example: Notas ingresadas correctamente
  */
 router.post("/notas/:email", estController.updateNotas);
 
@@ -224,7 +224,7 @@ router.post("/notas/:email", estController.updateNotas);
  *               properties:
  *                 msg:
  *                   type: string
- *                   example: Datos modificados correctamente.
+ *                   example: Datos modificados correctamente
  */
 router.put("/:email", estController.updateEstudiante);
 
@@ -256,9 +256,37 @@ router.put("/:email", estController.updateEstudiante);
  *               properties:
  *                 msg:
  *                   type: string
- *                   example: Teléfono modificado correctamente.
+ *                   example: Teléfono modificado correctamente
  */
 router.patch("/modTelefono", estController.updateTelefono);
+
+/**
+ * @openapi
+ * /estudiantes/{email}:
+ *   delete:
+ *     summary: Eliminar registro de un estudiante
+ *     parameters:
+ *       - in: path
+ *         name: email
+ *         required: true
+ *         description: Email del estudiante.
+ *         schema:
+ *           type: string
+ *     tags:
+ *       - Estudiantes
+ *     responses:
+ *       200:
+ *         description: Información del estudiante eliminada correctamente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 msg:
+ *                   type: string
+ *                   example: Estudiante eliminado correctamente
+ */
+router.delete("/:email", estController.deleteEstudiante);
 
 /**
  * @openapi
@@ -286,7 +314,7 @@ router.patch("/modTelefono", estController.updateTelefono);
  *             schema:
  *               type: object
  *               properties:
- *                 succes:
+ *                 success:
  *                   type: boolean
  */
 

@@ -19,7 +19,7 @@ module.exports.estController = {
         res.json(user);
       })
       .catch((err) => {
-        res.json({ error: "Database connection error" });
+        res.json({ error: "Error en el controlador" });
       });
   },
   createEstudiante: (req, res) => {
@@ -49,7 +49,7 @@ module.exports.estController = {
         res.json({ msg: "Estudiante registrado correctamente" });
       })
       .catch((err) => {
-        res.json({ error: "Database connection error" });
+        res.json({ error: "Error en el controlador" });
       });
   },
   updateNotas: (req, res) => {
@@ -73,7 +73,7 @@ module.exports.estController = {
         res.json({ msg: "Notas ingresadas correctamente" });
       })
       .catch(() => {
-        res.json({ error: "Database connection error" });
+        res.json({ error: "Error en el controlador" });
       });
   },
   updateEstudiante: (req, res) => {
@@ -107,7 +107,7 @@ module.exports.estController = {
         res.json({ msg: "Datos modificados correctamente" });
       })
       .catch(() => {
-        res.json({ error: "Database connection error" });
+        res.json({ error: "Error en el controlador" });
       });
   },
   updateTelefono: (req, res) => {
@@ -117,9 +117,20 @@ module.exports.estController = {
         res.json({ msg: "Telefono modificado correctamente" });
       })
       .catch((err) => {
-        res.json({ msg: "Database connection error" });
+        res.json({ msg: "Error en el controlador" });
       });
   },
+  deleteEstudiante: (req, res) => {
+    const { email } = req.params;
+    EstModel.deleteOne({ email: email })
+      .then((doc) => {
+        res.json({ msg: "Estudiante eliminado correctamente" });
+      })
+      .catch((error) => {
+        res.json({ error: "Error en el controlador" });
+      });
+  },
+
   login: (req, res) => {
     const { email, password } = req.body;
     EstModel.findOne({ email: email, password: password })
@@ -131,7 +142,7 @@ module.exports.estController = {
         }
       })
       .catch((error) => {
-        res.json({ msg: "Database connection error" });
+        res.json({ msg: "Error en el controlador" });
       });
   },
 };

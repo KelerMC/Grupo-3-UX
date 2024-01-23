@@ -4,6 +4,7 @@ const express = require("express");
 const cors = require("cors");
 const estRouter = require("./src/routes/estRoutes");
 const profRoutes = require("./src/routes/profRoutes");
+const recRoutes = require("./src/routes/recRoutes");
 const swaggerSpec = require("./src/swagger");
 const swaggerUi = require("swagger-ui-express");
 
@@ -15,6 +16,7 @@ app.use(express.json());
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use("/estudiantes", estRouter);
 app.use("/profesores", profRoutes);
+app.use("/reclamos", recRoutes);
 
 app.listen(process.env.PORT, () => {
   console.log(`Servidor escuchando en el puerto ${process.env.PORT}`);

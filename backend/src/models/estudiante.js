@@ -6,7 +6,7 @@ let estudianteSchema = new mongoose.Schema({
   apellido_pat: String,
   apellido_mat: String,
   telefono: String,
-  email: String,
+  email: { type: String, required: true, unique: true },
   password: String,
   isDelegado: Boolean,
   nota_ec: Number,
