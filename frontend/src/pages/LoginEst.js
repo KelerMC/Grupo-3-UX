@@ -5,7 +5,7 @@ import { AuthContext } from '../App.js';
 import { API_URL } from '../config.js';
 import '../styles/Login.css';
 
-export default function LoginProf() {
+export default function LoginEst() {
   const [contrasena, setContrasena] = useState('');
   const [correo, setCorreo] = useState('');
   const [error, setError] = useState('');
@@ -15,7 +15,7 @@ export default function LoginProf() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${API_URL}/profesores/login`, { email: correo, password: contrasena });
+      const response = await axios.post(`${API_URL}/estudiantes/login`, { email: correo, password: contrasena });
       if (response.data.success === true) {
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('correo', correo);
@@ -35,31 +35,31 @@ return (
     <div className="fondo-celeste"></div>
     <div className="login-contenedor">
       <div className="contenedor-horizontal">
-        {/* Sistema de Profesores */}
+        {/* Sistema de Estudiantes */}
         <div className="box-contenedor">
-          <h1 className="titulo-Sistema">Sistema de Calificaciones</h1>
+        <h1 className="titulo-Sistema">Sistema de Calificaciones</h1>
           <h1 className="titulo-Iniciar">Iniciar Sesión</h1>
           <form onSubmit={(e) => handleLogin(e)}>
             <div className="mb-3">
-              <label htmlFor="profesor-correo" className="lbl-correo">
+              <label htmlFor="estudiante-correo" className="lbl-correo">
                 Correo Electrónico:
               </label>
               <input
                 type="email"
                 className="campo-correo"
-                id="profesor-correo"
+                id="estudiante-correo"
                 value={correo}
                 onChange={(e) => setCorreo(e.target.value)}
               />
             </div>
             <div className="mb-3">
-              <label htmlFor="profesor-contrasena" className="lbl-contrasena">
+              <label htmlFor="estudiante-contrasena" className="lbl-contrasena">
                 Contraseña:
               </label>
               <input
                 type="password"
                 className="campo-contrasena"
-                id="profesor-contrasena"
+                id="estudiante-contrasena"
                 value={contrasena}
                 onChange={(e) => setContrasena(e.target.value)}
               />
