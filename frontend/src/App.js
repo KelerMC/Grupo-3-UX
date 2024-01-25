@@ -2,11 +2,12 @@ import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes, Outlet, Navigate } from "react-router-dom";
 import "./App.css";
 import Sidebar from "./components/Sidebar";
-import Main from "./pages/Main";
+import EstudianteMain from "./pages/Menu-Est.js";
+import ProfesorMain from "./pages/Prof-Menu.js";
 import { Helmet } from "react-helmet";
 import Login from "./pages/Login.js";
-import LoginEst from "./pages/LoginEst.js";
-import LoginProf from "./pages/LoginEst.js";
+import LoginEst from "./pages/EstLogin.js";
+import LoginProf from "./pages/ProfLogin.js";
 import Editar from "./pages/Editar.js";
 import ReporteEvaluaciones from "./pages/ReporteEvaluaciones.js";
 import Reclamo from "./pages/Reclamos.js";
@@ -25,75 +26,84 @@ const SidebarLayout = () => (
 function App() {
   const [loading, setLoading] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userType, setUserType] = useState('');
+  const [user, setUser] = useState({})
 
   useEffect(() => {
     const checkLoginStatus = async () => {
       try {
         const token = localStorage.getItem('token');
-        if (token) {
-          // Verificar si el token es válido (puedes hacer una llamada al servidor aquí)
-          // Si es válido, establecer el estado como autenticado
+        const storedUserType = localStorage.getItem('userType');
+
+        if (token && storedUserType) {
           setIsLoggedIn(true);
+          setUserType(storedUserType);
         } else {
-          // Si no hay token, o es inválido, establecer el estado como no autenticado
           setIsLoggedIn(false);
+          setUserType('');
         }
       } catch (error) {
         console.error('Error checking login status', error);
-        // En caso de error, también establecer el estado como no autenticado
         setIsLoggedIn(false);
+        setUserType('');
       } finally {
-        // Independientemente del resultado, marcar la carga como completa
         setLoading(false);
       }
     };
-  
+
     checkLoginStatus();
   }, []);
-  
-
 
   if (loading) {
     return <div>Cargando...</div>;
   }
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>
+    <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, userType, setUserType, setUser }}>
       <div className="App">
-      <Router>
-        <Helmet>
-          <title>Sistema Evaluaciones</title>
-        </Helmet>
-        <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/login-profesor" element={<LoginProf />} />
-        <Route path="/login-estudiante" element={<LoginEst />} />
-          <Route
-            path="/"
-            element={
-              isLoggedIn ? (
-                <Navigate to="/Main" />
-              ) : (
-                <Login setIsLoggedIn={setIsLoggedIn} />
-              )
-            }
-          />
-          {isLoggedIn && (
-            <Route path="/" element={<SidebarLayout />}>
-              <Route path="/Main" element={<Main />} />
-              <Route path="/Editar" element={<Editar />} />
-              <Route path="/ReporteEvaluaciones" element={<ReporteEvaluaciones />} />              
-              <Route path="/Reclamo" element={<Reclamo />} />              
-              <Route path="*" element={<Navigate to="/Main" />} />              
-            </Route>
-          )}
-          {!isLoggedIn && (
-            <Route path="*" element={<AccesoDenegado />} />
-          )}
-        </Routes>
-      </Router>
+        <Router>
+          <Helmet>
+            <title>Sistema Evaluaciones</title>
+          </Helmet>
+          <Routes>
+            <Route path="/" element={<Login />} />
+            <Route path="/login-profesor" element={<LoginProf />} />
+            <Route path="/login-estudiante" element={<LoginEst />} />
+            <Route
+              path="/"
+              element={
+                isLoggedIn ? (
+                  userType === 'profesor' ? (
+                    <Navigate to="/ProfesorMain" />
+                  ) : (
+                    <Navigate to="/EstudianteMain" />
+                  )
+                ) : (
+                  <Navigate to="/" />
+                )
+              }
+            />
+            {isLoggedIn && (
+              <Route path="/" element={<Sidebar userType={userType} />} >
+                {userType === 'profesor' && (
+                  <Route path="/ProfesorMain" element={<ProfesorMain />} />
+                )}
+                {userType === 'estudiante' && (
+                  <Route path="/EstudianteMain" element={<EstudianteMain />} />
+                )}
+                <Route path="/Editar" element={<Editar />} />
+                <Route path="/ReporteEvaluaciones" element={<ReporteEvaluaciones />} />
+                <Route path="/Reclamo" element={<Reclamo />} />
+                <Route path="*" element={<Navigate to={userType === 'profesor' ? "/ProfesorMain" : "/EstudianteMain"} />} />
+              </Route>
+            )}
+            {!isLoggedIn && (
+              <Route path="*" element={<AccesoDenegado />} />
+            )}
+          </Routes>
+        </Router>
       </div>
-      </AuthContext.Provider>
+    </AuthContext.Provider>
   );
 }
 

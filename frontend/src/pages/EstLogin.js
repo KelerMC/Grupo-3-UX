@@ -5,22 +5,24 @@ import { AuthContext } from '../App.js';
 import { API_URL } from '../config.js';
 import '../styles/Login.css';
 
-export default function LoginEst() {
+export default function EstLogin() {
   const [contrasena, setContrasena] = useState('');
   const [correo, setCorreo] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { setIsLoggedIn } = useContext(AuthContext);
+  const { setIsLoggedIn, setUser } = useContext(AuthContext);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.post(`${API_URL}/estudiantes/login`, { email: correo, password: contrasena });
-      if (response.data.success === true) {
-        localStorage.setItem('token', response.data.token);
+      if (response.data.succes === true) {
+        console.log("Sesion exitoso")
+        localStorage.setItem('token', response.data.token);        
         localStorage.setItem('correo', correo);
-        setIsLoggedIn(true);
-        navigate('/Main', { replace: true });
+        localStorage.setItem('userType', 'estudiante'); // Almacena el tipo de usuario
+        setUser({ isLoggedIn: true, userType: 'estudiante' }); // Actualiza el contexto de usuario        
+        navigate('/Menu-Est', { replace: true });
       } else {
         setError('Credenciales incorrectas');
       }

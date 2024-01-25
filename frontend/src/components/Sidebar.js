@@ -1,12 +1,13 @@
 import React, { useState, useEffect,useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './SideBar.css';
-import { SidebarData } from './SidebarData';
+import { SidebarDataE } from './SidebarDataE';
+import { SidebarDataP } from './SidebarDataP';
 import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { AuthContext } from '../App';
 
-export default function Sidebar() {
+export default function Sidebar({ userType }) {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   
   const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
@@ -25,10 +26,13 @@ export default function Sidebar() {
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('correo');
+    localStorage.removeItem('userType'); // Elimina el tipo de usuario del localStorage
     setIsLoggedIn(false);
     navigate('/');
   };
-  
+
+  // Determina qué conjunto de datos de la barra lateral usar según el tipo de usuario
+  const sidebarData = userType === 'profesor' ? SidebarDataP : SidebarDataE;
 
   return (
     <div className={`Sidebar ${isSidebarExpanded ? 'expanded' : 'collapsed'}`}>
@@ -37,7 +41,7 @@ export default function Sidebar() {
       </div>
       {isSidebarExpanded && (
         <ul className="SidebarList">
-          {SidebarData.map((val, key) => (
+          {sidebarData.map((val, key) => (
             // Mostrar solo elementos autorizados si el usuario está autenticado
             (isLoggedIn || !val.requiresAuth) && (
               <li

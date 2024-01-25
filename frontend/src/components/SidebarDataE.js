@@ -3,11 +3,11 @@ import SearchIcon from '@mui/icons-material/Search';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 
-export const SidebarData = [
+export const SidebarDataE = [
   {
     title: 'Main',
     icon: <HomeIcon />,
-    link: '/Main',
+    link: '/MainE',
   },
   {
     title: 'Editar',

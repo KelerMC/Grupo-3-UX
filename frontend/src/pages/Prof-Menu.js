@@ -6,10 +6,11 @@ import { API_URL } from '../config.js';
 import '../styles/Main.css';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
-const Main = () => {
+const MainP = () => {
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -55,4 +56,4 @@ const Main = () => {
   );
 };
 
-export default Main;
+export default MainP;
