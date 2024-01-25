@@ -7,7 +7,7 @@ export const SidebarDataP = [
   {
     title: 'Main',
     icon: <HomeIcon />,
-    link: '/MainP',
+    link: '/ProfesorMain',
   },
   {
     title: 'Asignaturas',

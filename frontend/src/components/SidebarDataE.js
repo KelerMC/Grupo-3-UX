@@ -7,7 +7,7 @@ export const SidebarDataE = [
   {
     title: 'Main',
     icon: <HomeIcon />,
-    link: '/MainE',
+    link: '/EstudianteMain',
   },
   {
     title: 'Editar',

@@ -6,11 +6,10 @@ import { API_URL } from '../config.js';
 import '../styles/Main.css';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
-const MainP = () => {
+const EstudianteMain = () => {
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -33,7 +32,7 @@ const MainP = () => {
   return (
     <div className='dashboard-contenedor'>
       <Helmet>
-        <title>Dashboard Modulo Cliente</title>
+        <title>Bievenido alumno</title>
       </Helmet>      
         <h1 style={{ textAlign: 'center' }}>Bienvenido al Sistema de Estudiantes y Calificaciones</h1>
         <div className="contenedor-perfil">
@@ -56,4 +55,4 @@ const MainP = () => {
   );
 };
 
-export default MainP;
+export default EstudianteMain;
