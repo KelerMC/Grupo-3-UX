@@ -1,0 +1,11 @@
+.contenedor-reclamo-detalle {
+    text-align: center;
+    margin: 20px;
+  }
+  
+  .reclamo-card {
+    margin: 10px;
+    padding: 20px;
+    max-width: 500px;
+    margin: auto;
+  }

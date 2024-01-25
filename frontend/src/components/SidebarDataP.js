@@ -17,6 +17,6 @@ export const SidebarDataP = [
   {
     title: 'Ver Reclamos',
     icon: <NotificationsActiveIcon />,
-    link: '/ContestarReclamo',
+    link: '/LeerReclamos',
   },
 ];

@@ -28,8 +28,7 @@ export default function ProfesorMain() {
   
     fetchData();
   
-    // Agregar un registro de la ubicación actual después de la alerta
-    console.log('Ubicación actual:', window.location.pathname);
+
   }, []);
 
   return (
@@ -37,20 +36,23 @@ export default function ProfesorMain() {
       <Helmet>
         <title>Bienvenido Profesor</title>
       </Helmet>      
-      <h1 style={{ textAlign: 'center' }}>Bienvenido al Sistema de Estudiantes y Calificaciones</h1>
-      <div className="contenedor-perfil">
-        {userData && (
+      <h1 style={{ textAlign: 'center' }}>Bienvenido al Sistema de Estudiantes y Calificaciones</h1>            
+        {userData && (          
+          <div className="contenedor-perfil">
           <div>
             <div>
               <AccountCircleIcon fontSize="100" className="icono-perfil" />
             </div>
             <h2 style={{ textAlign: 'center' }}>Datos del Profesor:</h2>
-            <p style={{ textAlign: 'center' }}>Correo: {userData.email}</p>            
+            <p style={{ textAlign: 'center' }}>Correo: {userData.email}</p>
+            <p style={{ textAlign: 'center' }}>Nombre: {userData.nombre} {userData.apellido_pat} {userData.apellido_mat}</p>
+            <p style={{ textAlign: 'center' }}>Telefono: {userData.telefono}</p>
+            <p style={{ textAlign: 'center' }}>DNI: {userData.dni}</p>
+          </div>
           </div>
         )}
         {isLoading && <p>Loading...</p>}
-        {error && <p>Error: {error}</p>}
-      </div>
+        {error && <p>Error: {error}</p>}      
     </div>
   );
 };

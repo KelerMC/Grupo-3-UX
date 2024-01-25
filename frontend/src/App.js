@@ -10,7 +10,9 @@ import LoginEst from "./pages/EstLogin.js";
 import LoginProf from "./pages/ProfLogin.js";
 import Editar from "./pages/Editar.js";
 import ReporteEvaluaciones from "./pages/ReporteEvaluaciones.js";
-import Reclamo from "./pages/Reclamos.js";
+import Reclamos from "./pages/Reclamos.js";
+import Asignaturas from "./pages/Asignaturas.js";
+import ReclamoDetalle from "./pages/ReclamoDetalle.js";
 
 function App() {
   return (
@@ -27,8 +29,10 @@ function App() {
           <Route path="/EstudianteMain" element={<EstudianteMain />} />
           <Route path="/ProfesorMain" element={<MainProfesor />} />
           <Route path="/Editar" element={<Editar />} />
-          <Route path="/ReporteEvaluaciones" element={<ReporteEvaluaciones />} />
-          <Route path="/Reclamo" element={<Reclamo />} />
+          <Route path="/ReporteEvaluaciones" element={<ReporteEvaluaciones />} />          
+          <Route path="/Asignaturas" element={<Asignaturas />} /> 
+          <Route path="/LeerReclamos" element={<Reclamos />} /> 
+          <Route path="/Reclamos/:id" element={<ReclamoDetalle />} />
         </Routes>
       </Router>
     </div>    
