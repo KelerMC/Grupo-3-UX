@@ -1,5 +1,5 @@
-import React, { useState, useEffect,useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './SideBar.css';
 import { SidebarDataE } from './SidebarDataE';
 import { SidebarDataP } from './SidebarDataP';
@@ -10,6 +10,7 @@ import { AuthContext } from '../App';
 export default function Sidebar() {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const toggleSidebar = () => {
     setIsSidebarExpanded(!isSidebarExpanded);
@@ -22,7 +23,13 @@ export default function Sidebar() {
     navigate('/');
   };
 
-  // Determina qué conjunto de datos de la barra lateral usar según el tipo de usuario
+  // Determine whether to show the sidebar based on the current route
+  const isLoginRoute = location.pathname === '/' || location.pathname === '/login-profesor' || location.pathname === '/login-estudiante';
+  if (isLoginRoute) {
+    return null; // Don't render the sidebar on login pages
+  }
+
+  // Determine which set of sidebar data to use based on the user type
   const userType = localStorage.getItem('userType');
   const sidebarData = userType === 'profesor' ? SidebarDataP : SidebarDataE;
 

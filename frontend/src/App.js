@@ -19,9 +19,7 @@ function App() {
         <Helmet>
           <title>Sistema Evaluaciones</title>
         </Helmet>
-
         <Sidebar />
-
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/login-profesor" element={<LoginProf />} />
