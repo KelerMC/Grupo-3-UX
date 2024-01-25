@@ -1,3 +1,8 @@
+.logo{
+    margin-left:1800px;
+    margin-top:100px;
+}
+
 body {
     margin: 0;
     display: flex;
@@ -86,4 +91,55 @@ body {
 .box-contenedor {
     width: 800px;
     margin: 10px;
+}
+
+.contenedor-principal{
+    display:flex;
+    
+}
+
+.titulo-LoginPrincipal{
+margin-left:900px;
+margin-top:200px;
+font-family:Arial, Helvetica, sans-serif;
+color: red;
+text-transform: uppercase;
+}
+
+.contenedor-estudiante{
+    margin-top:-110px;
+    margin-left:1500px;
+}
+
+.contenedor-profesor{
+    margin-top:250px;
+    margin-left:750px;
+}
+
+.titulo-profesores button {
+    background-color: #4CAF50; 
+    color: white; 
+    margin-left: 10px;
+    font-size: 16px;
+    border-radius: 8px;
+    padding: 10px 20px;
+    transition: background-color 0.3s ease;
+  }
+
+  .titulo-profesores button:hover {
+    background-color: #45a049; /* Color ligeramente más oscuro para el efecto de sombreado */
+}
+  
+  .titulo-estudiante button {
+    background-color: #4CAF50; 
+    color: white; 
+    margin-left: 20px;
+    font-size: 16px;
+    border-radius: 8px;
+    padding: 10px 20px;
+    transition: background-color 0.3s ease;
+  }
+
+  .titulo-estudiante button:hover {
+    background-color: #45a049; /* Color ligeramente más oscuro para el efecto de sombreado */
 }
