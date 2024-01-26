@@ -1,62 +1,20 @@
-.logo{
-    margin-left:1800px;
-    margin-top:100px;
+.logo {
+    margin-left: 900px;    
 }
 
-body {
-    margin: 0;
-    display: flex;
-    height: 100vh;
-    overflow: hidden; 
-}
-
-.login-contenedor {    
-    justify-content: space-between; 
+.login-contenedor {
+    justify-content: space-between;
     align-items: center;
-    padding: 10px;    
+    padding: 10px;
     max-width: 80%;
-    margin: 10% auto;    
-    position: relative; 
-    z-index: 1;     
+    margin: 10% auto;
+    position: relative;
+    z-index: 1;
     line-height: 3;
-    display: flex;            
+    display: flex;
     flex-direction: column;
     gap: 80px;
     flex-direction: row;
-}
-
-.fondo-celeste {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 33%; 
-    height: 100%;
-    background-color: #2E5ED2; 
-    z-index: 0; 
-}
-
-.titulo-Sistema {
-    margin-left: 250px;
-}
-
-.titulo-Iniciar {
-    margin-left: 315px;
-}
-
-.lbl-correo {
-    margin-left: 200px;
-}
-
-.lbl-contrasena {
-    margin-left: 200px;
-}
-
-.campo-correo {
-    margin-left: 50px;
-}
-
-.campo-contrasena {
-    margin-left: 100px;
 }
 
 .btn-IniciarSesion {
@@ -74,18 +32,17 @@ body {
 }
 
 .text-danger {
-    margin-left: 325px; 
+    margin-left: 325px;
     margin-top: -10px;
     color: red;
 }
 
 .contenedor-horizontal {
     display: flex;
-    justify-content: space-around;
-    border-radius: 30px;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-    background-color: #fff; 
-    max-width: 800px;
+    flex-direction: row; 
+    justify-content: space-around;     
+    flex-direction: row; 
+    margin: 100px auto; /* Aumenta el espacio entre .contenedor-horizontal y .contenedor-principal */
 }
 
 .box-contenedor {
@@ -93,53 +50,73 @@ body {
     margin: 10px;
 }
 
-.contenedor-principal{
-    display:flex;
-    
+.contenedor-principal {
+    margin-left: 300px;
+    font-family: Arial, Helvetica, sans-serif;
+    color: red;
+    text-transform: uppercase;
+    border: 1px solid #ccc;
+    margin-right: 200px;
+    background-color: #fff;
+    border-radius: 20px;    
 }
 
-.titulo-LoginPrincipal{
-margin-left:900px;
-margin-top:200px;
-font-family:Arial, Helvetica, sans-serif;
-color: red;
-text-transform: uppercase;
+.contenedor-estudiante,
+.contenedor-profesor {
+    border-radius: 10px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    background-color: rgba(255, 255, 255, 1);
+    justify-content: center;
+    text-align: center;
+    margin: 0 60px; /* Aumenta el espacio en los lados */
+    padding: 40px; /* Añade relleno al contenido */
+    z-index: 1;    
 }
-
-.contenedor-estudiante{
-    margin-top:-110px;
-    margin-left:1500px;
-}
-
-.contenedor-profesor{
-    margin-top:250px;
-    margin-left:750px;
-}
-
-.titulo-profesores button {
-    background-color: #4CAF50; 
-    color: white; 
-    margin-left: 10px;
+.titulo-profesores button,
+.titulo-estudiante button {
+    background-color: #4caf50;
+    color: white;
     font-size: 16px;
     border-radius: 8px;
     padding: 10px 20px;
-    transition: background-color 0.3s ease;
-  }
-
-  .titulo-profesores button:hover {
-    background-color: #45a049; /* Color ligeramente más oscuro para el efecto de sombreado */
+    transition: background-color 0.3s ease;    
 }
-  
-  .titulo-estudiante button {
-    background-color: #4CAF50; 
-    color: white; 
-    margin-left: 20px;
-    font-size: 16px;
-    border-radius: 8px;
-    padding: 10px 20px;
-    transition: background-color 0.3s ease;
-  }
 
-  .titulo-estudiante button:hover {
-    background-color: #45a049; /* Color ligeramente más oscuro para el efecto de sombreado */
+.titulo-profesores button:hover {
+    background-color: #45a049;
+}
+
+.titulo-estudiante button:hover {
+    background-color: #45a049;
+}
+
+.fondo-pantalla {
+    background-image: url('../img/background.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    height: 100vh;
+    background-color: rgba(255, 255, 255, 0.8);
+    z-index: 0; /* Ajusta el valor del z-index a 0 o un valor positivo */
+}
+.login-contenedor {    
+    flex-direction: column;        
+    border-radius: 20px;
+    box-shadow: 0 0 5px #00000033;
+    max-width: 1000px;    
+    margin: 2.5% auto;
+    position: relative; 
+    z-index: 1; 
+    background-color: #fff;     
+}
+
+.fondo-celeste {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 33%; 
+    height: 100%;
+    background-color: #2E5ED2; 
+    z-index: 0; 
 }
