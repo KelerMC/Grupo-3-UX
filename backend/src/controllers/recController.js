@@ -32,6 +32,17 @@ module.exports.recController = {
         res.json({ error: "Error en el controlador" });
       });
   },
+  getReclamos: (req, res) => {
+    const { email } = req.params;
+    RecModel.find({ email_asociado: email })
+      .select({ __v: 0 })
+      .then((list) => {
+        res.send(list);
+      })
+      .catch((error) => {
+        res.json({ error: "Error en el controlador" });
+      });
+  },
   createReclamo: (req, res) => {
     const { email_asociado, descripcion } = req.body;
     const nuevoReclamo = new RecModel({

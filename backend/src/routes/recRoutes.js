@@ -103,6 +103,32 @@ router.get("/:id", recController.getReclamo);
 
 /**
  * @openapi
+ * /reclamos/email/{email}:
+ *   get:
+ *     summary: Obtener los reclamos asociados a un email
+ *     parameters:
+ *       - in: path
+ *         name: email
+ *         required: true
+ *         description: email del estudiante
+ *         schema:
+ *           type: string
+ *     tags:
+ *       - Reclamos
+ *     responses:
+ *       200:
+ *         description: Reclamos obtenidos correctamente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Reclamo'
+ */
+router.get("/email/:email", recController.getReclamos);
+
+/**
+ * @openapi
  * /reclamos:
  *   post:
  *     summary: Registrar un nuevo reclamo
