@@ -1,0 +1,13 @@
+.contenedor-notas {
+    margin: 20px 0 20px 200px; /* Ajusta según sea necesario */    
+  }
+  
+  .notas-card {
+    width: 300px; /* Ajusta el ancho según tus preferencias */
+    margin: 0 auto;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  h1 {
+    margin-left: 300px; /* Ajusta el valor según tus preferencias */
+  }
