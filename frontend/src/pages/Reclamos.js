@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { API_URL } from '../config'; // Asegúrate de importar la URL correcta
-import '../styles/Reclamo.css'; // Importa el archivo CSS
+import { API_URL } from '../config';
+import '../styles/Reclamo.css';
 import { Button, Card, CardContent, Typography } from '@mui/material';
 
 const Reclamos = () => {
@@ -21,6 +21,10 @@ const Reclamos = () => {
     fetchReclamos();
   }, []);
 
+  const getColorByEstado = (isResuelto) => {
+    return isResuelto ? 'green' : 'red';
+  };
+
   return (
     <div className="contenedor-reclamos">
       <h1>Reclamos</h1>
@@ -29,7 +33,9 @@ const Reclamos = () => {
           <CardContent>
             <Typography variant="h6">Reclamo ID: {reclamo._id}</Typography>
             <Typography>Email asociado: {reclamo.email_asociado}</Typography>
-            <Typography>Estado: {reclamo.isResuelto ? 'Resuelto' : 'No resuelto'}</Typography>
+            <Typography style={{ color: getColorByEstado(reclamo.isResuelto) }}>
+              Estado: {reclamo.isResuelto ? 'Resuelto' : 'No resuelto'}
+            </Typography>
             <Link to={`/Reclamos/${reclamo._id}`}>
               <Button variant="contained" color="primary">
                 Ver Detalles

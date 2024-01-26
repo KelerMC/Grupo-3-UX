@@ -11,7 +11,8 @@ const Asignaturas = () => {
     const [openModal, setOpenModal] = useState(false);
     const [notaEC, setNotaEC] = useState('');
     const [notaEF, setNotaEF] = useState('');
-    const [notaEP, setNotaEP] = useState('');  
+    const [notaEP, setNotaEP] = useState('');
+    const [notasIniciales, setNotasIniciales] = useState(null);
   
     useEffect(() => {
       const fetchEstudiantes = async () => {
@@ -33,6 +34,11 @@ const Asignaturas = () => {
       if (event) {
         setAnchorEl(event.currentTarget);
         setSelectedStudent(student);
+        setNotasIniciales({
+          notaEC: student.nota_ec,
+          notaEF: student.nota_ef,
+          notaEP: student.nota_ep,
+        });
       }
     };
   
@@ -52,11 +58,8 @@ const Asignaturas = () => {
       handleOpenMenu();
       handleOpenModal();
     };
-  
-    const handleEditarNotas = () => {
-      console.log('Editar notas del estudiante:', selectedStudent);
-    };
-  
+
+      
     const handleGuardarCalificacion = async () => {
       try {
         // Lógica para guardar las calificaciones
@@ -94,6 +97,9 @@ const Asignaturas = () => {
       }
     };
     
+    const handleEditarNotas = () => {
+      console.log('Editar notas del estudiante:', selectedStudent);
+    };
   
     return (
         <div className="contenedor-alumnos">
@@ -147,7 +153,7 @@ const Asignaturas = () => {
                       elevation={2} 
                     >
                       <MenuItem onClick={handleCalificar}>Calificar</MenuItem>
-                      <MenuItem onClick={handleEditarNotas}>Editar Notas</MenuItem>
+                      <MenuItem onClick={handleCalificar}>Editar Notas</MenuItem>
                     </Menu>
                     </TableCell>
                   </TableRow>

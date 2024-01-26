@@ -1,8 +1,6 @@
-// ReporteEvaluaciones.js
-
 import React, { useState, useEffect } from 'react';
 import { API_URL } from '../config';
-import { Card, CardContent, Typography, Button } from '@mui/material';
+import { Card, CardContent, Typography, Button, TextField } from '@mui/material';
 import '../styles/ReporteEvaluaciones.css'; // Asegúrate de importar el archivo CSS
 
 const ReporteEvaluaciones = () => {
@@ -22,6 +20,9 @@ const ReporteEvaluaciones = () => {
     promedio: 0,
   });
 
+  const [reclamo, setReclamo] = useState('');
+  const [mostrarCajaReclamo, setMostrarCajaReclamo] = useState(false);
+
   useEffect(() => {
     const fetchAlumno = async () => {
       try {
@@ -37,9 +38,33 @@ const ReporteEvaluaciones = () => {
   }, [email]);
 
   const handlePresentarReclamo = () => {
-    // Lógica para presentar un reclamo
-    // Puedes redirigir al usuario a la página de presentación de reclamos o mostrar un formulario modal
-    console.log('Reclamo presentado');
+    setMostrarCajaReclamo(true);
+  };
+
+  const handleEnviarReclamo = async () => {
+    try {
+      // Realizar la solicitud POST al endpoint /reclamos
+      const response = await fetch(`${API_URL}/reclamos`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email_asociado: email,
+          descripcion: reclamo,
+        }),
+      });
+
+      if (response.ok) {
+        console.log('Reclamo enviado con éxito');
+        // Puedes realizar acciones adicionales si es necesario, como mostrar un mensaje de éxito o redirigir al usuario
+      } else {
+        console.error('Error al enviar el reclamo:', response.status, response.statusText);
+        // Puedes manejar el error de alguna manera, como mostrando un mensaje de error al usuario
+      }
+    } catch (error) {
+      console.error('Error al enviar el reclamo:', error);
+    }
   };
 
   return (
@@ -56,6 +81,20 @@ const ReporteEvaluaciones = () => {
           <Button variant="contained" color="primary" onClick={handlePresentarReclamo}>
             Presentar Reclamo
           </Button>
+          {mostrarCajaReclamo && (
+            <div className="reclamo-container">
+              <TextField
+                label="Descripción del Reclamo"
+                multiline
+                rows={4}
+                value={reclamo}
+                onChange={(e) => setReclamo(e.target.value)}
+              />
+              <Button variant="contained" color="primary" onClick={handleEnviarReclamo}>
+                Enviar Reclamo
+              </Button>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
