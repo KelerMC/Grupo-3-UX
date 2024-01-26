@@ -20,8 +20,8 @@ export const SidebarDataE = [
     link: '/ReporteEvaluaciones',
   },
   {
-    title: 'Reclamos',
+    title: 'Ver Reclamos',
     icon: <NotificationsActiveIcon />,
-    link: '/Reclamos',
+    link: '/MisReclamos',
   },
 ];

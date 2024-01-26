@@ -13,6 +13,7 @@ import ReporteEvaluaciones from "./pages/ReporteEvaluaciones.js";
 import Reclamos from "./pages/Reclamos.js";
 import Asignaturas from "./pages/Asignaturas.js";
 import ReclamoDetalle from "./pages/ReclamoDetalle.js";
+import MisReclamos from "./pages/MisReclamos.js";
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
           <Route path="/Asignaturas" element={<Asignaturas />} /> 
           <Route path="/LeerReclamos" element={<Reclamos />} /> 
           <Route path="/Reclamos/:id" element={<ReclamoDetalle />} />
+          <Route path="/MisReclamos" element={<MisReclamos />} />
         </Routes>
       </Router>
     </div>    

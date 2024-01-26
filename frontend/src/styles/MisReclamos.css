@@ -1,0 +1,11 @@
+.contenedor-mis-reclamos {
+    text-align: center;
+    margin: 20px;
+  }
+  
+  .reclamo-card {
+    margin-top: 20px;
+    width: 400px;
+    display: inline-block;
+    vertical-align: top;
+  }
