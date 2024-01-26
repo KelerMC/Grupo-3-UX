@@ -14,6 +14,7 @@ import Reclamos from "./pages/Reclamos.js";
 import Asignaturas from "./pages/Asignaturas.js";
 import ReclamoDetalle from "./pages/ReclamoDetalle.js";
 import MisReclamos from "./pages/MisReclamos.js";
+import AgregarAlumno from "./pages/AgregarAlumno.js";
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
           <Route path="/LeerReclamos" element={<Reclamos />} /> 
           <Route path="/Reclamos/:id" element={<ReclamoDetalle />} />
           <Route path="/MisReclamos" element={<MisReclamos />} />
+          <Route path="/AgregarAlumno" element={<AgregarAlumno />} />
         </Routes>
       </Router>
     </div>    
