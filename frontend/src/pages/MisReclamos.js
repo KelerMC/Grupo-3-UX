@@ -12,7 +12,7 @@ const MisReclamos = () => {
   useEffect(() => {
     const fetchReclamos = async () => {
       try {
-        const response = await fetch(`${API_URL}/reclamo/${email}`);
+        const response = await fetch(`${API_URL}/reclamos/email/${email}`);
         const data = await response.json();
         setReclamos(data);
       } catch (error) {
@@ -25,8 +25,8 @@ const MisReclamos = () => {
 
   return (
     <div className="contenedor-mis-reclamos">
-      <h1>Mis Reclamos</h1>
-      {reclamos.map((reclamo) => (
+      <h1 className="titulo-mis-reclamos">Mis Reclamos</h1>
+      {reclamos.map((reclamo) => (        
         <Card key={reclamo._id} className="reclamo-card">
           <CardContent>
             <Typography variant="h6">Estado del Reclamo: {reclamo.isResuelto ? 'Resuelto' : 'No resuelto'}</Typography>

@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { API_URL } from '../config.js';
-import { Table, TableContainer, TableHead, TableRow, TableCell, TableBody, Paper, IconButton, Menu, MenuItem } from '@mui/material';
+import {  Table,  TableContainer,  TableHead,  TableRow,  TableCell,  TableBody,  Paper,  IconButton,  Menu,  MenuItem,  Modal,  Backdrop,  Fade,  TextField,   Button,} from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import '../styles/Asignaturas.css'; // Asegúrate de tener este archivo importado si contiene estilos adicionales
-
-
 
 const Asignaturas = () => {
     const [estudiantes, setEstudiantes] = useState([]);
     const [anchorEl, setAnchorEl] = useState(null);
     const [selectedStudent, setSelectedStudent] = useState(null);
+    const [openModal, setOpenModal] = useState(false);
+    const [notaEC, setNotaEC] = useState('');
+    const [notaEF, setNotaEF] = useState('');
+    const [notaEP, setNotaEP] = useState('');  
   
     useEffect(() => {
       const fetchEstudiantes = async () => {
@@ -25,24 +27,73 @@ const Asignaturas = () => {
       fetchEstudiantes();
     }, []);
   
+///modal
+
     const handleOpenMenu = (event, student) => {
-      setAnchorEl(event.currentTarget);
-      setSelectedStudent(student);
+      if (event) {
+        setAnchorEl(event.currentTarget);
+        setSelectedStudent(student);
+      }
     };
   
     const handleCloseMenu = () => {
       setAnchorEl(null);
     };
   
-    const handleCalificar = () => {
-      // Lógica para la acción de calificar aquí
-      console.log(`Calificar a ${selectedStudent.nombre}`);
-      handleCloseMenu();
+    const handleOpenModal = () => {
+      setOpenModal(true);
     };
   
-    const handleEditarNotas = () => {        
-        console.log('Editar notas del estudiante:', selectedStudent);
-    }
+    const handleCloseModal = () => {
+      setOpenModal(false);
+    };
+  
+    const handleCalificar = () => {
+      handleOpenMenu();
+      handleOpenModal();
+    };
+  
+    const handleEditarNotas = () => {
+      console.log('Editar notas del estudiante:', selectedStudent);
+    };
+  
+    const handleGuardarCalificacion = async () => {
+      try {
+        // Lógica para guardar las calificaciones
+        console.log('Calificación guardada:', notaEC, notaEF, notaEP);
+    
+        // Realizar la solicitud a la API
+        const response = await fetch(`${API_URL}/estudiantes/notas/${selectedStudent.email}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            nota_ec: parseFloat(notaEC),
+            nota_ep: parseFloat(notaEP),
+            nota_ef: parseFloat(notaEF),
+          }),
+        });
+    
+        if (!response.ok) {
+          throw new Error(`Error al enviar las notas. Código de respuesta: ${response.status}`);
+        }
+    
+        // Mostrar alerta de éxito
+        alert('Notas enviadas exitosamente.');
+    
+        // Actualizar la tabla (vuelve a cargar los datos de los estudiantes)
+        const updatedEstudiantes = await fetch(`${API_URL}/estudiantes`).then(response => response.json());
+        setEstudiantes(updatedEstudiantes);
+    
+        // Cierra el modal
+        handleCloseModal();
+      } catch (error) {
+        console.error('Error al enviar las notas:', error);
+        // Aquí puedes manejar el error de acuerdo a tus necesidades
+      }
+    };
+    
   
     return (
         <div className="contenedor-alumnos">
@@ -89,20 +140,56 @@ const Asignaturas = () => {
                         <MoreVertIcon />
                     </IconButton>
                     <Menu
-                        id="actions-menu"
-                        anchorEl={anchorEl}
-                        open={Boolean(anchorEl)}
-                        onClose={handleCloseMenu}
+                      id="actions-menu"
+                      anchorEl={anchorEl}
+                      open={Boolean(anchorEl)}
+                      onClose={handleCloseMenu}
+                      elevation={2} 
                     >
-                        <MenuItem onClick={handleCalificar}>Calificar</MenuItem>
-                        <MenuItem onClick={handleEditarNotas}>Editar Notas</MenuItem>
+                      <MenuItem onClick={handleCalificar}>Calificar</MenuItem>
+                      <MenuItem onClick={handleEditarNotas}>Editar Notas</MenuItem>
                     </Menu>
                     </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
-          </TableContainer>          
+          </TableContainer>
+          <Modal
+        aria-labelledby="transition-modal-title"
+        aria-describedby="transition-modal-description"
+        open={openModal}
+        onClose={handleCloseModal}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 500,
+        }}
+      >
+        <Fade in={openModal}>
+          <div className="modal-paper">
+            <h2 id="transition-modal-title">Calificar Estudiante</h2>
+            <TextField
+              label="Nota EC"
+              value={notaEC}
+              onChange={(e) => setNotaEC(e.target.value)}
+            />
+            <TextField
+              label="Nota EF"
+              value={notaEF}
+              onChange={(e) => setNotaEF(e.target.value)}
+            />
+            <TextField
+              label="Nota EP"
+              value={notaEP}
+              onChange={(e) => setNotaEP(e.target.value)}
+            />
+            <Button variant="contained" onClick={handleGuardarCalificacion}>
+              Guardar Calificación
+            </Button>
+          </div>
+        </Fade>
+      </Modal>                    
         </div>
       );
       
