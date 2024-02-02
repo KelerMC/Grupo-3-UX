@@ -6,6 +6,7 @@ import '../styles/Asignaturas.css'; // Asegúrate de tener este archivo importad
 
 const Asignaturas = () => {
     const [estudiantes, setEstudiantes] = useState([]);
+    const [estudiantesOriginales, setEstudiantesOriginales] = useState([]);
     const [anchorEl, setAnchorEl] = useState(null);
     const [selectedStudent, setSelectedStudent] = useState(null);
     const [openModal, setOpenModal] = useState(false);
@@ -13,13 +14,16 @@ const Asignaturas = () => {
     const [notaEF, setNotaEF] = useState('');
     const [notaEP, setNotaEP] = useState('');
     const [notasIniciales, setNotasIniciales] = useState(null);
-  
+    const [filtroNombre, setFiltroNombre] = useState('');
+    const [filtroCodigo, setFiltroCodigo] = useState('')
+
     useEffect(() => {
       const fetchEstudiantes = async () => {
         try {
           const response = await fetch(`${API_URL}/estudiantes`);
           const data = await response.json();
           setEstudiantes(data);
+          setEstudiantesOriginales(data);
         } catch (error) {
           console.error('Error fetching estudiantes data:', error);
         }
@@ -100,10 +104,39 @@ const Asignaturas = () => {
     const handleEditarNotas = () => {
       console.log('Editar notas del estudiante:', selectedStudent);
     };
+
+    const handleSearchNombre = (e) => {
+      setFiltroNombre(e.target.value);
+      filterStudents(e.target.value, filtroCodigo);
+    };
+  
+    const handleSearchCodigo = (e) => {
+      setFiltroCodigo(e.target.value);
+      filterStudents(filtroNombre, e.target.value);
+    };
+  
+    const filterStudents = (nombre, codigo) => {
+      const estudiantesFiltrados = estudiantesOriginales.filter(
+        (estudiante) =>
+          estudiante.nombre.toLowerCase().includes(nombre.toLowerCase()) &&
+          estudiante.codigo.toLowerCase().includes(codigo.toLowerCase())
+      );
+      setEstudiantes(estudiantesFiltrados);
+    };
   
     return (
         <div className="contenedor-alumnos">
           <h1>Asignaturas</h1>
+          <TextField
+            label="Buscar por Nombre"
+            variant="outlined"
+            onChange={handleSearchNombre}
+          />
+          <TextField
+            label="Buscar por Código"
+            variant="outlined"
+            onChange={handleSearchCodigo}
+          />
           <TableContainer component={Paper}>
             <Table>
               <TableHead>
