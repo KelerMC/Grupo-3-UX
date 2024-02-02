@@ -56,14 +56,14 @@ const ReporteEvaluaciones = () => {
       });
 
       if (response.ok) {
-        console.log('Reclamo enviado con éxito');
+        alert('Reclamo enviado con éxito');
         // Puedes realizar acciones adicionales si es necesario, como mostrar un mensaje de éxito o redirigir al usuario
       } else {
-        console.error('Error al enviar el reclamo:', response.status, response.statusText);
+        alert('Error al enviar el reclamo:', response.status, response.statusText);
         // Puedes manejar el error de alguna manera, como mostrando un mensaje de error al usuario
       }
     } catch (error) {
-      console.error('Error al enviar el reclamo:', error);
+      alert('Error al enviar el reclamo:', error);
     }
   };
 

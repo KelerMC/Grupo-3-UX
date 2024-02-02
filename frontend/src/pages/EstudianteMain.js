@@ -41,8 +41,7 @@ const EstudianteMain = () => {
         <div>
             <AccountCircleIcon fontSize="100" className="icono-perfil" />
         </div>
-            <h2 style={{ textAlign: 'center' }}>Datos del Estudiante:</h2>            
-            <p style={{ textAlign: 'center' }}>DNI: {userData.dni}</p>
+            <h2 style={{ textAlign: 'center' }}>Datos del Estudiante:</h2>                        
             <p style={{ textAlign: 'center' }}>Nombre: {userData.nombre}</p>
             <p style={{ textAlign: 'center' }}>Apellido Paterno: {userData.apellido_pat}</p>
             <p style={{ textAlign: 'center' }}>Apellido Materno: {userData.apellido_mat}</p>

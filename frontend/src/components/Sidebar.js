@@ -5,10 +5,12 @@ import { SidebarDataE } from './SidebarDataE';
 import { SidebarDataP } from './SidebarDataP';
 import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/Logout';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import PersonSearchIcon from '@mui/icons-material/PersonSearch';
 import axios from 'axios';
 import { API_URL } from '../config.js';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import AgregarAlumno from '../pages/AgregarAlumno';
+
 
 export default function Sidebar() {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
@@ -79,12 +81,18 @@ export default function Sidebar() {
               <div id="title">{val.title}</div>
             </li>
           ))}
-          {isDelegado && (
-            <li className="row" onClick={() => navigate('/AgregarAlumno')}>
-            <div id="icon">{<PersonAddIcon />}</div>
-            <div id="title">Agregar Alumno</div>
-          </li>
-          )}
+            {isDelegado && (
+              <>
+                <li className="row" onClick={() => navigate('/AgregarAlumno')}>
+                  <div id="icon">{<PersonAddIcon />}</div>
+                  <div id="title">Agregar Alumno</div>
+                </li>
+                <li className="row" onClick={() => navigate('/EditarDele')}>
+                  <div id="icon">{<PersonSearchIcon />}</div>
+                  <div id="title">Editar Estudiantes</div>
+                </li>
+              </>
+            )}
           <li className="row" onClick={handleLogout}>
             <div id="icon">{<LogoutIcon />}</div>
             <div id="title">Cerrar Sesión</div>

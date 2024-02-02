@@ -1,6 +1,6 @@
 import HomeIcon from '@mui/icons-material/Home';
 import SearchIcon from '@mui/icons-material/Search';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import EditIcon from '@mui/icons-material/Edit';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 
 export const SidebarDataE = [
@@ -10,8 +10,8 @@ export const SidebarDataE = [
     link: '/EstudianteMain',
   },
   {
-    title: 'Editar',
-    icon: <PersonAddIcon />,
+    title: 'Editar datos personales',
+    icon: <EditIcon />,
     link: '/Editar',
   },
   {

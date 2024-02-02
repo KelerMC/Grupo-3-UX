@@ -35,7 +35,7 @@ const AgregarAlumno = () => {
   
       // Realiza la petición para agregar el nuevo alumno
       const response = await axios.post(`${API_URL}/estudiantes`, nuevoAlumno);
-      console.log('Alumno agregado:', response.data);
+      alert('Alumno agregado exitosamente');
   
       // Limpia el formulario después de agregar el alumno (opcional)
       setNuevoAlumno({
@@ -49,7 +49,7 @@ const AgregarAlumno = () => {
         isDelegado: false,
       });
     } catch (error) {
-      console.error('Error al agregar el alumno:', error);
+      alert('Error al agregar el alumno');
     }
   };  
 

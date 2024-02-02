@@ -19,13 +19,14 @@ const Editar = () => {
   });
 
   const [edicionHabilitada, setEdicionHabilitada] = useState(false);
-
+  const [esDelegado, setEsDelegado] = useState(false);
   useEffect(() => {
     const fetchEstudiante = async () => {
       try {
         const response = await fetch(`${API_URL}/estudiantes/${email}`);
         const data = await response.json();
         setEstudiante(data);
+        setEsDelegado(data.isDelegado);
       } catch (error) {
         console.error('Error fetching student data:', error);
       }
@@ -66,7 +67,7 @@ const Editar = () => {
         body: JSON.stringify(estudiante),
       });
       const data = await response.json();
-      console.log('Estudiante actualizado:', data);
+      alert('Estudiante actualizado:', estudiante.codigo);
     } catch (error) {
       console.error('Error updating student data:', error);
     }
@@ -78,48 +79,8 @@ const Editar = () => {
       <button onClick={handleHabilitarEdicion}>
         Habilitar Edición
       </button>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Código:
-          <input
-            type="text"
-            name="codigo"
-            value={estudiante.codigo}
-            onChange={handleInputChange}
-            disabled={!edicionHabilitada}
-          />
-        </label>
-        <label>
-          Nombre:
-          <input
-            type="text"
-            name="nombre"
-            value={estudiante.nombre}
-            onChange={handleInputChange}
-            disabled={!edicionHabilitada}
-          />
-        </label>
-        <label>
-          Apellido Paterno:
-          <input
-            type="text"
-            name="apellido_pat"
-            value={estudiante.apellido_pat}
-            onChange={handleInputChange}
-            disabled={!edicionHabilitada}
-          />
-        </label>
-        <label>
-          Apellido Materno:
-          <input
-            type="text"
-            name="apellido_mat"
-            value={estudiante.apellido_mat}
-            onChange={handleInputChange}
-            disabled={!edicionHabilitada}
-          />
-        </label>
-        <label>
+      <form onSubmit={handleSubmit}>   
+      <label>
           Teléfono:
           <input
             type="text"
@@ -128,28 +89,50 @@ const Editar = () => {
             onChange={handleInputChange}
             disabled={!edicionHabilitada}
           />
-        </label>
-        <label>
-          Email:
-          <input
-            type="text"
-            name="email"
-            value={estudiante.email}
-            onChange={handleInputChange}
-            disabled={!edicionHabilitada}
-          />
-        </label>
-        {estudiante.isDelegado && (
-          <label>
-            Delegado:
-            <input
-              type="checkbox"
-              name="isDelegado"
-              checked={estudiante.isDelegado}
-              onChange={handleInputChange}
-              disabled={!edicionHabilitada}
-            />
-          </label>
+        </label>     
+        {esDelegado && (
+          <>
+            <label>
+              Nombre:
+              <input
+                type="text"
+                name="nombre"
+                value={estudiante.nombre}
+                onChange={handleInputChange}
+                disabled={!edicionHabilitada}
+              />
+            </label>
+            <label>
+              Apellido Paterno:
+              <input
+                type="text"
+                name="apellido_pat"
+                value={estudiante.apellido_pat}
+                onChange={handleInputChange}
+                disabled={!edicionHabilitada}
+              />
+            </label>
+            <label>
+              Apellido Materno:
+              <input
+                type="text"
+                name="apellido_mat"
+                value={estudiante.apellido_mat}
+                onChange={handleInputChange}
+                disabled={!edicionHabilitada}
+              />
+            </label>
+            <label>
+              Email:
+              <input
+                type="text"
+                name="email"
+                value={estudiante.email}
+                onChange={handleInputChange}
+                disabled={!edicionHabilitada}
+              />
+            </label>
+          </>
         )}
         <button type="submit">Guardar Cambios</button>
       </form>
