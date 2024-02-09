@@ -27,7 +27,7 @@ CREATE TABLE profesor (
 );
 
 CREATE TABLE estudiante_curso (
-  id_est_curso int PRIMARY KEY,
+  id_est_curso SERIAL PRIMARY KEY,
   estudiante_codigo VARCHAR(255) REFERENCES estudiante(codigo),
   curso_id INT REFERENCES curso(id_curso),
   nota_ec int,
@@ -40,10 +40,14 @@ CREATE TABLE reclamo (
   id_reclamo SERIAL PRIMARY KEY,
   estudiante_codigo VARCHAR(255) REFERENCES estudiante(codigo),
   descripcion VARCHAR(255),
-  isResuelto BOOLEAN,
+  is_resuelto BOOLEAN,
   respuesta VARCHAR(255),
-  dni_profesor VARCHAR(255) REFERENCES profesor(dni)
+  dni_profesor VARCHAR(255) REFERENCES profesor(dni),
+  fecha_ejecucion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  fecha_respuesta TIMESTAMP,
+  archivado BOOLEAN DEFAULT FALSE
 );
+
 INSERT INTO estudiante (codigo, nombre, apellido_pat, apellido_mat, telefono, email, is_delegado)
 VALUES
 ('21200264', 'WILFREDO', 'GUIA', 'MUÑOZ', '941246135', 'wilfredo.guia@unmsm.edu.pe', false),

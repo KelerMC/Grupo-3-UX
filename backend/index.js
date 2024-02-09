@@ -12,11 +12,13 @@ const estRoutes = require('./src/routes/estRoutes');
 const profRoutes = require('./src/routes/profRoutes');
 const recRoutes =require('./src/routes/recRoutes');
 const cursoRoutes = require('./src/routes/cursoRoutes');
+const cursoEstRoutes = require('./src/routes/cursoEstRoutes');
 
 app.use('/estudiantes', estRoutes);
 app.use('/profesores', profRoutes);
 app.use('/reclamos', recRoutes);
 app.use('/cursos', cursoRoutes);
+app.use('/cursosEst', cursoEstRoutes);
 
 const port = process.env.PORT;
 

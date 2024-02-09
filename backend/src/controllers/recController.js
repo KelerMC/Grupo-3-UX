@@ -54,37 +54,50 @@ module.exports.recController = {
 
   createReclamo: (req, res) => {
     const { estudiante_codigo, descripcion, dni_profesor } = req.body;
-    db.query('INSERT INTO reclamo (estudiante_codigo, descripcion, is_resuelto, dni_profesor) VALUES ($1, $2, false, $3) RETURNING *', [estudiante_codigo, descripcion, dni_profesor], (error, result) => {
-      if (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Error en el controlador' });
-      } else {
-        const reclamoCreado = result.rows[0];
-        res.json({ msg: 'Reclamo creado correctamente', reclamo: reclamoCreado });
+    const fecha_ejecucion = new Date(); // Obtener la fecha actual    
+    db.query(
+      'INSERT INTO reclamo (estudiante_codigo, descripcion, is_resuelto, dni_profesor, fecha_ejecucion) VALUES ($1, $2, false, $3, $4) RETURNING *',
+      [estudiante_codigo, descripcion, dni_profesor, fecha_ejecucion],
+      (error, result) => {
+        if (error) {
+          console.error(error);
+          res.status(500).json({ error: 'Error en el controlador' });
+        } else {
+          const reclamoCreado = result.rows[0];
+          res.json({ msg: 'Reclamo creado correctamente', reclamo: reclamoCreado });
+        }
       }
-    });
-  },
+    );
+  }, 
 
   resolverReclamo: (req, res) => {
     const { id } = req.params;
     const { respuesta } = req.body;
-    db.query('UPDATE reclamo SET respuesta = $1, is_resuelto = true WHERE id_reclamo = $2 RETURNING *', [respuesta, id], (error, result) => {
-      if (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Error en el controlador' });
-      } else {
-        const reclamoResuelto = result.rows[0];
-        res.json({ msg: 'Reclamo resuelto', reclamo: reclamoResuelto });
+    const fecha_respuesta = new Date(); // Obtener la fecha actual
+    
+    db.query(
+      'UPDATE reclamo SET respuesta = $1, is_resuelto = true, fecha_respuesta = $2 WHERE id_reclamo = $3 RETURNING *',
+      [respuesta, fecha_respuesta, id],
+      (error, result) => {
+        if (error) {
+          console.error(error);
+          res.status(500).json({ error: 'Error en el controlador' });
+        } else {
+          const reclamoResuelto = result.rows[0];
+          res.json({ msg: 'Reclamo resuelto', reclamo: reclamoResuelto });
+        }
       }
-    });
+    );
   },
-   actualizarReclamo: (req, res) => {
+  
+  actualizarReclamo: (req, res) => {
     const { id } = req.params;
     const { respuesta } = req.body;
+    const fecha_respuesta = new Date(); // Obtener la fecha actual
   
     db.query(
-      'UPDATE reclamo SET respuesta = $1 WHERE id_reclamo = $2 RETURNING *',
-      [respuesta, id],
+      'UPDATE reclamo SET respuesta = $1, fecha_respuesta = $2 WHERE id_reclamo = $3 RETURNING *',
+      [respuesta, fecha_respuesta, id],
       (error, result) => {
         if (error) {
           console.error(error);
@@ -92,6 +105,22 @@ module.exports.recController = {
         } else {
           const reclamoActualizado = result.rows[0];
           res.json({ msg: 'Reclamo actualizado correctamente', reclamo: reclamoActualizado });
+        }
+      }
+    );
+  },
+  archivarReclamo: (req, res) => {
+    const { id } = req.params;
+    db.query(
+      'UPDATE reclamo SET archivado = true WHERE id_reclamo = $1 RETURNING *',
+      [id],
+      (error, result) => {
+        if (error) {
+          console.error(error);
+          res.status(500).json({ error: 'Error en el controlador' });
+        } else {
+          const reclamoArchivado = result.rows[0];
+          res.json({ msg: 'Reclamo archivado correctamente', reclamo: reclamoArchivado });
         }
       }
     );

@@ -9,65 +9,75 @@ const ReclamoDetalle = () => {
   const [reclamo, setReclamo] = useState(null);    
   const [estudianteCodigo, setEstudianteCodigo] = useState(null);
   const [estudiante, setEstudiante] = useState(null);
-
-
-  const [respuesta, setRespuesta] = useState('');
-  const [respuestaEditada, setRespuestaEditada] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [respuesta, setRespuesta] = useState('');  
   const [mostrarCajaRespuesta, setMostrarCajaRespuesta] = useState(false);
   const [mostrarCajaEdicion, setMostrarCajaEdicion] = useState(false);
 
-
   useEffect(() => {
-    const fetchReclamo = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch(`${API_URL}/reclamos/${id}`);
-        const data = await response.json();
-        setReclamo(data);        
-        if (data.is_resuelto) {
+        setLoading(true); // Establecer loading a true antes de iniciar la carga de datos  
+        const reclamoResponse = await fetch(`${API_URL}/reclamos/${id}`);
+        const reclamoData = await reclamoResponse.json();
+        setReclamo(reclamoData);  
+        if (reclamoData.is_resuelto) {
           setMostrarCajaRespuesta(true);
-          setRespuesta(data.respuesta);
-        }
-
-        setEstudianteCodigo(data.estudiante_codigo);
+          setRespuesta(reclamoData.respuesta);
+        }  
+        setEstudianteCodigo(reclamoData.estudiante_codigo);  
+        if (reclamoData.estudiante_codigo) {
+          const estudianteResponse = await fetch(`${API_URL}/estudiantes/codigo/${reclamoData.estudiante_codigo}`);
+          const estudianteData = await estudianteResponse.json();
+          setEstudiante(estudianteData);
+        }  
+        setLoading(false); // Establecer loading a false después de que todas las solicitudes hayan finalizado
       } catch (error) {
-        console.error('Error fetching reclamo data:', error);
+        console.error('Error fetching data:', error);
       }
     };
-
-    fetchReclamo();
+  
+    fetchData();
   }, [id]);
+  
 
-  useEffect(() => {    
-    if (estudianteCodigo) {
-      const fetchEstudiante = async () => {
-        try {
-          const responseEstudiante = await fetch(`${API_URL}/estudiantes/codigo/${estudianteCodigo}`);
-          const dataEstudiante = await responseEstudiante.json();
-          setEstudiante(dataEstudiante);
-        } catch (error) {
-          console.error('Error fetching estudiante data:', error);
-        }
-      };
-
-      fetchEstudiante();
+  const fetchReclamo = async () => {
+    try {
+      const response = await fetch(`${API_URL}/reclamos/${id}`);
+      const data = await response.json();
+      setReclamo(data);        
+      if (data.is_resuelto) {
+        setMostrarCajaRespuesta(true);
+        setRespuesta(data.respuesta);
+      }
+      setEstudianteCodigo(data.estudiante_codigo);      
+    } catch (error) {
+      console.error('Error fetching reclamo data:', error);
     }
-  }, [estudianteCodigo]);
+  };
+
+
+  if (loading) {
+    return <div>Loading...</div>; // Renderizar un indicador de carga mientras se cargan los datos
+  }
+
+  if (!reclamo) {
+    return <div>No se pudo cargar el reclamo.</div>; // Manejar el caso en el que no se pueda cargar el reclamo
+  }
+  const formatFecha = (fechaISO) => {
+    const date = new Date(fechaISO);    
+    return date.toLocaleString();    
+  };
 
   const actualizarReclamo = async () => {
     try {
-      const nuevaRespuesta = window.prompt('Ingrese la nueva respuesta del reclamo:', respuesta);
-      if (nuevaRespuesta === null) {
-        // El usuario hizo clic en "Cancelar"
-        return;
-      }
-  
       const response = await fetch(`${API_URL}/reclamos/actualizar/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          respuesta: nuevaRespuesta,
+          respuesta: respuesta, // Utiliza la respuesta del campo de texto
         }),
       });
   
@@ -76,7 +86,7 @@ const ReclamoDetalle = () => {
         const reclamoActualizado = await response.json();
         setRespuesta(reclamoActualizado.respuesta);
         setMostrarCajaEdicion(false);
-        window.location.reload();
+        fetchReclamo();         
       } else {
         console.error('Error al actualizar el reclamo:', response.status, response.statusText);
       }
@@ -84,19 +94,17 @@ const ReclamoDetalle = () => {
       console.error('Error al actualizar el reclamo:', error);
     }
   };
-  
 
   const handleResolverReclamo = () => {
     setMostrarCajaRespuesta(true);
   };
 
-  const handleEnviarRespuesta = async () => {
+  const handleEnviarRespuesta = async () => {    
     try {
       if (reclamo.is_resuelto) {
         console.log('No se puede enviar respuesta. El reclamo ya está resuelto.');
         return;
       }
-
       const response = await fetch(`${API_URL}/reclamos/resolver/${id}`, {
         method: 'PATCH',
         headers: {
@@ -106,11 +114,11 @@ const ReclamoDetalle = () => {
           respuesta: respuesta,
         }),
       });
-
-      if (response.ok) {
+  
+      if (response.ok) {        
         alert('Reclamo resuelto con éxito');        
         setRespuesta(respuesta);
-        window.location.reload();
+        fetchReclamo();
       } else {
         console.error('Error al resolver el reclamo:', response.status, response.statusText);
       }
@@ -118,10 +126,11 @@ const ReclamoDetalle = () => {
       console.error('Error al resolver el reclamo:', error);
     }
   };
+  
 
   if (!reclamo) {
     return <div>Loading...</div>;
-  }
+  }  
 
   return (
     <div className="contenedor-reclamo-detalle">
@@ -135,15 +144,17 @@ const ReclamoDetalle = () => {
             <>
               <Typography>Nombre Estudiante: {estudiante.nombre} {estudiante.apellido_pat} {estudiante.apellido_mat}</Typography>
               <Typography>Correo Estudiante: {estudiante.email}</Typography>
+              <Typography>Fecha de Envio: {formatFecha(reclamo.fecha_ejecucion)}</Typography>
+              {reclamo.respuesta && (
+                <Typography>Fecha de Respuesta: {formatFecha(reclamo.fecha_respuesta)}</Typography>
+              )}
             </>
           )}
           {!reclamo.is_resuelto && (
             <>
               <Button variant="contained" color="primary" onClick={handleResolverReclamo}>
                 Resolver Reclamo
-              </Button>
-
-              {/* Nueva caja para enviar respuesta normal */}
+              </Button>              
               <TextField
                 label="Respuesta Normal"
                 multiline
@@ -160,7 +171,7 @@ const ReclamoDetalle = () => {
               </Button>
             </>
           )}
-          {mostrarCajaRespuesta && reclamo.is_resuelto && (
+          {mostrarCajaRespuesta && reclamo && reclamo.is_resuelto && (
             <>
               {mostrarCajaEdicion ? (
                 <>
