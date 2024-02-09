@@ -13,13 +13,14 @@ export default function EstLogin() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${API_URL}/estudiantes/login`, { email: correo, password: contrasena });
-      console.log('Server Response:', response);
-      if (response.data.succes) {
-        console.log("Sesión exitosa")            
+      const response = await axios.post(`${API_URL}/estudiantes/login`, {
+        email: correo,
+        contra: contrasena,        
+      });  
+      console.log('Server Response:', response);  
+      if (response.data.success) {  // Corregir 'succes' a 'success'
         localStorage.setItem('correo', correo);
         localStorage.setItem('userType', 'estudiante');
-        // localStorage.getItem() <-- Elimina esta línea
         navigate('/EstudianteMain', { replace: true });
       } else {
         setError('Credenciales incorrectas');
@@ -29,6 +30,7 @@ export default function EstLogin() {
       console.error(error);
     }
   };
+  
 
   return (
     <div>

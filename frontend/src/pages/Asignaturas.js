@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { API_URL } from '../config.js';
 import {  Table,  TableContainer,  TableHead,  TableRow,  TableCell,  TableBody,  Paper,  IconButton,  Menu,  MenuItem,  Modal,  Backdrop,  Fade,  TextField,   Button,} from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import '../styles/Asignaturas.css'; // Asegúrate de tener este archivo importado si contiene estilos adicionales
+import '../styles/Asignaturas.css'; 
 
 const Asignaturas = () => {
     const [estudiantes, setEstudiantes] = useState([]);
@@ -18,6 +18,7 @@ const Asignaturas = () => {
     const [filtroCodigo, setFiltroCodigo] = useState('')
     const [modoEdicion, setModoEdicion] = useState(false);
     const [edicionHabilitada, setEdicionHabilitada] = useState(false);
+
     useEffect(() => {
       const fetchEstudiantes = async () => {
         try {
@@ -48,7 +49,7 @@ const Asignaturas = () => {
     if (event) {
       setAnchorEl(event.currentTarget);
       setSelectedStudent(student);
-      setEdicionHabilitada(false); // Inicializa el estado de edición al abrir el menú
+      setEdicionHabilitada(false); 
       if (student.nota_ec !== null && student.nota_ef !== null && student.nota_ep !== null) {
         setModoEdicion(true);
         setNotasIniciales({
@@ -103,13 +104,12 @@ const Asignaturas = () => {
         });    
         if (response.ok) {
           alert("Nota Enviada Correctamente");
-          actualizarDatosEstudiantes(); // Actualiza los datos de los estudiantes después de guardar la calificación
+          actualizarDatosEstudiantes(); 
         } else {
           alert('Error al enviar las notas:', response.statusText);
         }       
       } catch (error) {
-        console.error('Error al enviar las notas:', error);
-        // Aquí puedes manejar el error de acuerdo a tus necesidades
+        console.error('Error al enviar las notas:', error);        
       }      
     };    
     

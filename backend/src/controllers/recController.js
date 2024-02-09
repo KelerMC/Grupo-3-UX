@@ -1,76 +1,99 @@
-let RecModel = require("../models/reclamo");
+const db = require('../config/db');
 
 module.exports.recController = {
   getAll: (req, res) => {
-    RecModel.find()
-      .select({ descripcion: 0, respuesta: 0, __v: 0 })
-      .then((list) => {
-        res.send(list);
-      })
-      .catch((err) => {
-        res.json({ error: "Error en el controlador" });
-      });
-  },
-  getSinResolver: (req, res) => {
-    RecModel.find({ isResuelto: false })
-      .select({ descripcion: 0, respuesta: 0, __v: 0 })
-      .then((list) => {
-        res.send(list);
-      })
-      .catch((err) => {
-        res.json({ error: "Error en el controlador" });
-      });
-  },
-  getReclamo: (req, res) => {
-    const { id } = req.params;
-    RecModel.findById(id)
-      .select({ __v: 0 })
-      .then((reclamo) => {
-        res.json(reclamo);
-      })
-      .catch((error) => {
-        res.json({ error: "Error en el controlador" });
-      });
-  },
-  getReclamos: (req, res) => {
-    const { email } = req.params;
-    RecModel.find({ email_asociado: email })
-      .select({ __v: 0 })
-      .then((list) => {
-        res.send(list);
-      })
-      .catch((error) => {
-        res.json({ error: "Error en el controlador" });
-      });
-  },
-  createReclamo: (req, res) => {
-    const { email_asociado, descripcion } = req.body;
-    const nuevoReclamo = new RecModel({
-      email_asociado: email_asociado,
-      descripcion: descripcion,
-      isResuelto: false,
+    db.query('SELECT * FROM reclamo', (error, result) => {
+      if (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error en el controlador' });
+      } else {
+        res.json(result.rows);
+      }
     });
-    nuevoReclamo
-      .save()
-      .then((doc) => {
-        res.json({ msg: "Reclamo creado correctamente" });
-      })
-      .catch((error) => {
-        res.json({ error: "Error en el controlador" });
-      });
   },
+
+  getSinResolver: (req, res) => {
+    db.query('SELECT * FROM reclamo WHERE is_resuelto = false', (error, result) => {
+      if (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error en el controlador' });
+      } else {
+        res.json(result.rows);
+      }
+    });
+  },
+
+  getUnReclamo: (req, res) => {
+    const { id } = req.params;
+    db.query('SELECT * FROM reclamo WHERE id_reclamo = $1', [id], (error, result) => {
+      if (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error en el controlador' });
+      } else {
+        if (result.rows.length > 0) {
+          const reclamo = result.rows[0];
+          res.json(reclamo);
+        } else {
+          res.json({ error: 'Reclamo no encontrado' });
+        }
+      }
+    });
+  },
+
+  getReclamos: (req, res) => {
+    const { estudiante_codigo } = req.params;    
+    db.query('SELECT * FROM reclamo WHERE estudiante_codigo = $1', [estudiante_codigo], (error, result) => {
+      if (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error en el controlador' });
+      } else {
+        res.json(result.rows);
+      }
+    });
+  },
+
+  createReclamo: (req, res) => {
+    const { estudiante_codigo, descripcion, dni_profesor } = req.body;
+    db.query('INSERT INTO reclamo (estudiante_codigo, descripcion, is_resuelto, dni_profesor) VALUES ($1, $2, false, $3) RETURNING *', [estudiante_codigo, descripcion, dni_profesor], (error, result) => {
+      if (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error en el controlador' });
+      } else {
+        const reclamoCreado = result.rows[0];
+        res.json({ msg: 'Reclamo creado correctamente', reclamo: reclamoCreado });
+      }
+    });
+  },
+
   resolverReclamo: (req, res) => {
     const { id } = req.params;
     const { respuesta } = req.body;
-    RecModel.findByIdAndUpdate(id, {
-      respuesta: respuesta,
-      isResuelto: true,
-    })
-      .then((doc) => {
-        res.json({ msg: "Reclamo resuelto" });
-      })
-      .catch((error) => {
-        res.json({ error: "Error en el controlador" });
-      });
+    db.query('UPDATE reclamo SET respuesta = $1, is_resuelto = true WHERE id_reclamo = $2 RETURNING *', [respuesta, id], (error, result) => {
+      if (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error en el controlador' });
+      } else {
+        const reclamoResuelto = result.rows[0];
+        res.json({ msg: 'Reclamo resuelto', reclamo: reclamoResuelto });
+      }
+    });
+  },
+   actualizarReclamo: (req, res) => {
+    const { id } = req.params;
+    const { respuesta } = req.body;
+  
+    db.query(
+      'UPDATE reclamo SET respuesta = $1 WHERE id_reclamo = $2 RETURNING *',
+      [respuesta, id],
+      (error, result) => {
+        if (error) {
+          console.error(error);
+          res.status(500).json({ error: 'Error en el controlador' });
+        } else {
+          const reclamoActualizado = result.rows[0];
+          res.json({ msg: 'Reclamo actualizado correctamente', reclamo: reclamoActualizado });
+        }
+      }
+    );
   },
 };

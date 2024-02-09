@@ -7,9 +7,9 @@ import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/Logout';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import PersonSearchIcon from '@mui/icons-material/PersonSearch';
+import AddHomeIcon from '@mui/icons-material/AddHome';
 import axios from 'axios';
 import { API_URL } from '../config.js';
-import AgregarAlumno from '../pages/AgregarAlumno';
 
 
 export default function Sidebar() {
@@ -90,6 +90,10 @@ export default function Sidebar() {
                 <li className="row" onClick={() => navigate('/EditarDele')}>
                   <div id="icon">{<PersonSearchIcon />}</div>
                   <div id="title">Editar Estudiantes</div>
+                </li>
+                <li className="row" onClick={() => navigate('/AgregarACurso')}>
+                  <div id="icon">{<AddHomeIcon />}</div>
+                  <div id="title">Registrar en un curso</div>
                 </li>
               </>
             )}
