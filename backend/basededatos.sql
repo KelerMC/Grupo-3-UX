@@ -48,10 +48,6 @@ CREATE TABLE reclamo (
   archivado BOOLEAN DEFAULT FALSE
 );
 
-INSERT INTO estudiante (codigo, nombre, apellido_pat, apellido_mat, telefono, email, is_delegado)
-VALUES
-('21200264', 'WILFREDO', 'GUIA', 'MUÑOZ', '941246135', 'wilfredo.guia@unmsm.edu.pe', false),
-('18200114', 'KELER', 'MODESTO', 'CALIXTO', '989893902', 'keler.modesto@unmsm.edu.pe', true)
 
 INSERT INTO estudiante_curso (estudiante_codigo, curso_id)
 VALUES 

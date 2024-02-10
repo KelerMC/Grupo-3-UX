@@ -95,9 +95,6 @@ const ReclamoDetalle = () => {
     }
   };
 
-  const handleResolverReclamo = () => {
-    setMostrarCajaRespuesta(true);
-  };
 
   const handleEnviarRespuesta = async () => {    
     try {
@@ -151,10 +148,7 @@ const ReclamoDetalle = () => {
             </>
           )}
           {!reclamo.is_resuelto && (
-            <>
-              <Button variant="contained" color="primary" onClick={handleResolverReclamo}>
-                Resolver Reclamo
-              </Button>              
+            <>         
               <TextField
                 label="Respuesta Normal"
                 multiline
