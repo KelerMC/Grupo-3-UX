@@ -18,4 +18,73 @@
   .titulo-mis-reclamos {
     margin-left: -10px; /* Ajusta el margen izquierdo según sea necesario */
   }
-  
+/* MisReclamos.css */
+
+.modal-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.8); /* Fondo blanco con opacidad */
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: #fff;
+  border-radius: 20px;
+  border: 2px solid #000;
+  padding: 20px;
+  max-width: 500px;
+  width: 100%;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h2 {
+  margin: 0;
+}
+
+.modal-header button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.contenedor-mis-reclamos {
+  max-width: 1000px;
+  margin: auto; /* Centra el contenido dentro del contenedor */
+}
+
+.titulo-mis-reclamos {
+  max-width: 800px; /* Puedes ajustar este valor según tus necesidades */
+  width: 100%;
+}
+
+.reclamo-container {
+  margin-top: 20px; /* Ajusta el margen según tus necesidades */
+}
+
+.reclamo-container .form-control {
+  width: 100%;
+}
+
+.reclamo-card {
+  margin-top: 20px; /* Ajusta el margen según tus necesidades */
+}
+
+.reclamo-card.resuelto {
+  background-color: #aaffaa; /* Fondo verde para reclamos resueltos */
+}
+
+.reclamo-card.no-resuelto {
+  background-color: #ffaaaa; /* Fondo rojo para reclamos no resueltos */
+}

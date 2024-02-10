@@ -1,27 +1,28 @@
-let EstModel = require("../models/estudiante");
+const db = require('../config/db'); // adjust the path accordingly
 
 module.exports.estController = {
-  getAll: (req, res) => {
-    EstModel.find()
-      .select({ _id: 0, __v: 0, password: 0 })
-      .then((list) => {
-        res.send(list);
-      })
-      .catch((err) => {
-        res.json({ error: "Error en el controlador" });
-      });
-  },
   getEstudiante: (req, res) => {
     const { email } = req.params;
-    EstModel.findOne({ email: email })
-      .select({ _id: 0, __v: 0, password: 0 })
-      .then((user) => {
-        res.json(user);
-      })
-      .catch((err) => {
-        res.json({ error: "Error en el controlador" });
-      });
+    db.query('SELECT * FROM estudiante WHERE email = $1', [email], (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error en el controlador' });
+      } else {
+        res.json(result.rows[0]);
+      }
+    });
   },
+  getAll: (req, res) => {
+    db.query('SELECT * FROM estudiante', (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error en el controlador' });
+      } else {
+        res.json(result.rows);
+      }
+    });
+  },
+
   createEstudiante: (req, res) => {
     const {
       codigo,
@@ -30,52 +31,24 @@ module.exports.estController = {
       apellido_mat,
       telefono,
       email,
-      password,
+      contra,
       isDelegado,
     } = req.body;
-    const newEstudiante = new EstModel({
-      codigo: codigo,
-      nombre: nombre,
-      apellido_pat: apellido_pat,
-      apellido_mat: apellido_mat,
-      telefono: telefono,
-      email: email,
-      password: password,
-      isDelegado: isDelegado,
-    });
-    newEstudiante
-      .save()
-      .then((doc) => {
-        res.json({ msg: "Estudiante registrado correctamente" });
-      })
-      .catch((err) => {
-        res.json({ error: "Error en el controlador" });
-      });
-  },
-  updateNotas: (req, res) => {
-    const { email } = req.params;
-    const { nota_ec, nota_ep, nota_ef } = req.body;
-    promedio = (nota_ec + nota_ep + nota_ef) / 3;
-    promedio = Math.round(promedio);
 
-    EstModel.updateOne(
-      { email: email },
-      {
-        $set: {
-          nota_ec: nota_ec,
-          nota_ep: nota_ep,
-          nota_ef: nota_ef,
-          promedio: promedio,
-        },
+    db.query(
+      'INSERT INTO estudiante (codigo, nombre, apellido_pat, apellido_mat, telefono, email, contra, is_delegado) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
+      [codigo, nombre, apellido_pat, apellido_mat, telefono, email, contra, isDelegado],
+      (err) => {
+        if (err) {
+          console.error(err);
+          res.status(500).json({ error: 'Error en el controlador' });
+        } else {
+          res.json({ msg: 'Estudiante registrado correctamente' });
+        }
       }
-    )
-      .then(() => {
-        res.json({ msg: "Notas ingresadas correctamente" });
-      })
-      .catch(() => {
-        res.json({ error: "Error en el controlador" });
-      });
+    );
   },
+
   updateEstudiante: (req, res) => {
     const { email } = req.params;
     const {
@@ -85,64 +58,83 @@ module.exports.estController = {
       apellido_mat,
       telefono,
       nuevoEmail,
-      password,
+      contra,
       isDelegado,
     } = req.body;
-    EstModel.updateOne(
-      { email: email },
-      {
-        $set: {
-          codigo: codigo,
-          nombre: nombre,
-          apellido_pat: apellido_pat,
-          apellido_mat: apellido_mat,
-          telefono: telefono,
-          email: nuevoEmail,
-          password: password,
-          isDelegado: isDelegado,
-        },
+
+    db.query(
+      'UPDATE estudiante SET codigo = $1, nombre = $2, apellido_pat = $3, apellido_mat = $4, telefono = $5, email = $6, contra = $7, is_delegado = $8 WHERE email = $9',
+      [codigo, nombre, apellido_pat, apellido_mat, telefono, nuevoEmail, contra, isDelegado, email],
+      (err) => {
+        if (err) {
+          console.error(err);
+          res.status(500).json({ error: 'Error en el controlador' });
+        } else {
+          res.json({ msg: 'Datos modificados correctamente' });
+        }
       }
-    )
-      .then(() => {
-        res.json({ msg: "Datos modificados correctamente" });
-      })
-      .catch(() => {
-        res.json({ error: "Error en el controlador" });
-      });
+    );
   },
+
   updateTelefono: (req, res) => {
-    const { email, nuevoTelefono } = req.body;
-    EstModel.updateOne({ email: email }, { $set: { telefono: nuevoTelefono } })
-      .then((result) => {
-        res.json({ msg: "Telefono modificado correctamente" });
-      })
-      .catch((err) => {
-        res.json({ msg: "Error en el controlador" });
-      });
+    const { email } = req.params;
+    const { nuevoTelefono } = req.body;
+
+    db.query(
+      'UPDATE estudiante SET telefono = $1 WHERE email = $2',
+      [nuevoTelefono, email],
+      (err) => {
+        if (err) {
+          console.error(err);
+          res.status(500).json({ error: 'Error en el controlador' });
+        } else {
+          res.json({ msg: 'Teléfono modificado correctamente' });
+        }
+      }
+    );
   },
+
   deleteEstudiante: (req, res) => {
     const { email } = req.params;
-    EstModel.deleteOne({ email: email })
-      .then((doc) => {
-        res.json({ msg: "Estudiante eliminado correctamente" });
-      })
-      .catch((error) => {
-        res.json({ error: "Error en el controlador" });
-      });
+    db.query('DELETE FROM estudiante WHERE email = $1', [email], (err) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error en el controlador' });
+      } else {
+        res.json({ msg: 'Estudiante eliminado correctamente' });
+      }
+    });
   },
 
   login: (req, res) => {
-    const { email, password } = req.body;
-    EstModel.findOne({ email: email, password: password })
-      .then((usuarioEncontrado) => {
-        if (usuarioEncontrado) {
-          res.json({ succes: true, msg: "Inicio de sesion exitoso" });
+    const { email, contra } = req.body;
+    db.query(
+      'SELECT * FROM estudiante WHERE email = $1 AND contra = $2',
+      [email, contra],
+      (err, result) => {
+        if (err) {
+          console.error(err);
+          res.status(500).json({ error: 'Error en el controlador' });
         } else {
-          res.json({ succes: false, msg: "Credenciales incorrectas" });
+          if (result.rows.length > 0) {
+            res.json({ success: true, msg: 'Inicio de sesión exitoso' });
+          } else {
+            res.json({ success: false, msg: 'Credenciales incorrectas' });
+          }
         }
-      })
-      .catch((error) => {
-        res.json({ msg: "Error en el controlador" });
-      });
+      }
+    );
+  },
+  
+  getEstudianteByCodigo: (req, res) => {
+    const { codigo } = req.params;
+    db.query('SELECT * FROM estudiante WHERE codigo = $1', [codigo], (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error en el controlador' });
+      } else {
+        res.json(result.rows[0]);
+      }
+    });
   },
 };

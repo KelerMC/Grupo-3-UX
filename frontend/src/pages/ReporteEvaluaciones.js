@@ -1,27 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { API_URL } from '../config';
-import { Card, CardContent, Typography, Button, TextField } from '@mui/material';
-import '../styles/ReporteEvaluaciones.css'; // Asegúrate de importar el archivo CSS
+import { Card, CardContent, Typography, Select, MenuItem } from '@mui/material';
+import '../styles/ReporteEvaluaciones.css';
 
 const ReporteEvaluaciones = () => {
   const email = localStorage.getItem('correo');
-
+  const [selectedCursoId, setSelectedCursoId] = useState(null);
   const [alumno, setAlumno] = useState({
     codigo: '',
     nombre: '',
     apellido_pat: '',
     apellido_mat: '',
     telefono: '',
-    email: '',
-    isDelegado: false,
-    nota_ec: 0,
-    nota_ef: 0,
-    nota_ep: 0,
-    promedio: 0,
+    email: '',    
   });
-
-  const [reclamo, setReclamo] = useState('');
-  const [mostrarCajaReclamo, setMostrarCajaReclamo] = useState(false);
 
   useEffect(() => {
     const fetchAlumno = async () => {
@@ -37,64 +29,71 @@ const ReporteEvaluaciones = () => {
     fetchAlumno();
   }, [email]);
 
-  const handlePresentarReclamo = () => {
-    setMostrarCajaReclamo(true);
-  };
+  const [cursos, setCursos] = useState([]);
+  const [notasCurso, setNotasCurso] = useState(null);
 
-  const handleEnviarReclamo = async () => {
-    try {
-      // Realizar la solicitud POST al endpoint /reclamos
-      const response = await fetch(`${API_URL}/reclamos`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email_asociado: email,
-          descripcion: reclamo,
-        }),
-      });
-
-      if (response.ok) {
-        alert('Reclamo enviado con éxito');
-        // Puedes realizar acciones adicionales si es necesario, como mostrar un mensaje de éxito o redirigir al usuario
-      } else {
-        alert('Error al enviar el reclamo:', response.status, response.statusText);
-        // Puedes manejar el error de alguna manera, como mostrando un mensaje de error al usuario
+  useEffect(() => {
+    const fetchCursos = async () => {
+      try {
+        const response = await fetch(`${API_URL}/cursos`);
+        const data = await response.json();
+        setCursos(data);
+      } catch (error) {
+        console.error('Error fetching cursos:', error);
       }
-    } catch (error) {
-      alert('Error al enviar el reclamo:', error);
-    }
-  };
+    };
+
+    fetchCursos();
+  }, []);
+
+  useEffect(() => {
+    const fetchNotasCurso = async () => {
+      if (selectedCursoId && alumno.codigo) {
+        try {
+          const response = await fetch(`${API_URL}/cursosEst/${alumno.codigo}/${selectedCursoId}`);
+          const data = await response.json();
+          setNotasCurso(data);
+        } catch (error) {
+          console.error('Error fetching student notes for course:', error);
+        }
+      } else {
+        setNotasCurso(null);
+      }
+    };
+
+    fetchNotasCurso();
+  }, [selectedCursoId, alumno.codigo]);
 
   return (
     <div className="contenedor-notas">
       <h1>Reporte de Evaluaciones</h1>
       <Card className="notas-card">
         <CardContent>
-          <Typography variant="h6">Notas de {alumno.nombre} {alumno.apellido_pat}</Typography>
-          <Typography>Código: {alumno.codigo}</Typography>
-          <Typography>Nota de Evaluación Continua (EC): {alumno.nota_ec}</Typography>
-          <Typography>Nota de Examen Final (EF): {alumno.nota_ef}</Typography>
-          <Typography>Nota de Examen Parcial (EP): {alumno.nota_ep}</Typography>
-          <Typography>Promedio: {alumno.promedio}</Typography>
-          <Button variant="contained" color="primary" onClick={handlePresentarReclamo}>
-            Presentar Reclamo
-          </Button>
-          {mostrarCajaReclamo && (
-            <div className="reclamo-container">
-              <TextField
-                label="Descripción del Reclamo"
-                multiline
-                rows={4}
-                value={reclamo}
-                onChange={(e) => setReclamo(e.target.value)}
-              />
-              <Button variant="contained" color="primary" onClick={handleEnviarReclamo}>
-                Enviar Reclamo
-              </Button>
+          <Select
+            label="Seleccionar Curso"
+            value={selectedCursoId}
+            onChange={(e) => setSelectedCursoId(e.target.value)}
+          >
+            <MenuItem value={null} disabled>
+              Seleccionar Curso
+            </MenuItem>
+            {cursos.map((curso) => (
+              <MenuItem key={curso.id_curso} value={curso.id_curso}>
+                {curso.nombre}
+              </MenuItem>
+            ))}
+          </Select>
+          {notasCurso ? (
+            <div>
+              <Typography variant="h6">Notas de {alumno.nombre} {alumno.apellido_pat} para el curso seleccionado</Typography>
+              <Typography>Nota de Evaluación Continua (EC): {notasCurso.nota_ec}</Typography>
+              <Typography>Nota de Examen Final (EF): {notasCurso.nota_ef}</Typography>
+              <Typography>Nota de Examen Parcial (EP): {notasCurso.nota_ep}</Typography>
+              <Typography>Promedio: {notasCurso.promedio}</Typography>
             </div>
-          )}
+          ) : (
+            <Typography>Selecciona un curso para ver las notas.</Typography>
+          )}          
         </CardContent>
       </Card>
     </div>

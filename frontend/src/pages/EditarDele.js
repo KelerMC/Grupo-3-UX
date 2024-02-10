@@ -17,7 +17,7 @@ const EditarDele = () => {
     apellido_mat: '',
     telefono: '',
     email: '',
-    isDelegado: false,
+    is_delegado: false,
   });
 
   const handleSearch = async () => {

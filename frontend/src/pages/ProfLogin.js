@@ -13,12 +13,13 @@ export default function ProfLogin() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${API_URL}/profesores/login`, { email: correo, password: contrasena });
-      if (response.data.succes===true) {                
+      const response = await axios.post(`${API_URL}/profesores/login`, { email: correo, contra: contrasena });
+      if (response.data.success===true) {                
         localStorage.setItem('correo', correo);
         localStorage.setItem('userType', 'profesor');
         localStorage.setItem('userData', JSON.stringify(response.data.userData));
         console.log('Before navigation');
+        console.log(response.data);
         navigate('/ProfesorMain', { replace: true });
         console.log('After navigation');
       } else {

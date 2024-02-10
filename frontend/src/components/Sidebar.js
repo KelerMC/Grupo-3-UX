@@ -7,9 +7,9 @@ import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/Logout';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import PersonSearchIcon from '@mui/icons-material/PersonSearch';
+import AddHomeIcon from '@mui/icons-material/AddHome';
 import axios from 'axios';
 import { API_URL } from '../config.js';
-import AgregarAlumno from '../pages/AgregarAlumno';
 
 
 export default function Sidebar() {
@@ -49,15 +49,13 @@ export default function Sidebar() {
     navigate('/');
   };
 
-  // Determine whether to show the sidebar based on the current route
-  const isLoginRoute = location.pathname === '/' || location.pathname === '/login-profesor' || location.pathname === '/login-estudiante';
+    const isLoginRoute = location.pathname === '/' || location.pathname === '/login-profesor' || location.pathname === '/login-estudiante';
   if (isLoginRoute) {
-    return null; // Don't render the sidebar on login pages
+    return null; 
   }
 
-  const isDelegado = userData && userData.isDelegado;
-
-  // Determine which set of sidebar data to use based on the user type
+  const is_delegado = userData && userData.is_delegado;
+  
   const userType = localStorage.getItem('userType');
   const sidebarData = userType === 'profesor' ? SidebarDataP : SidebarDataE;
 
@@ -81,7 +79,7 @@ export default function Sidebar() {
               <div id="title">{val.title}</div>
             </li>
           ))}
-            {isDelegado && (
+            {is_delegado && (
               <>
                 <li className="row" onClick={() => navigate('/AgregarAlumno')}>
                   <div id="icon">{<PersonAddIcon />}</div>
@@ -90,6 +88,10 @@ export default function Sidebar() {
                 <li className="row" onClick={() => navigate('/EditarDele')}>
                   <div id="icon">{<PersonSearchIcon />}</div>
                   <div id="title">Editar Estudiantes</div>
+                </li>
+                <li className="row" onClick={() => navigate('/AgregarACurso')}>
+                  <div id="icon">{<AddHomeIcon />}</div>
+                  <div id="title">Registrar en un curso</div>
                 </li>
               </>
             )}
