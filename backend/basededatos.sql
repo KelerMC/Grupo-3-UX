@@ -9,12 +9,6 @@ CREATE TABLE estudiante (
   is_delegado BOOLEAN
 );
 
-CREATE TABLE curso (
-  id_curso SERIAL PRIMARY KEY,
-  nombre VARCHAR(255) NOT NULL,
-  descripcion VARCHAR(255),
-  dni_profesor VARCHAR(255) REFERENCES profesor(dni)
-);
 
 CREATE TABLE profesor (
   dni VARCHAR(255) PRIMARY KEY,
@@ -24,6 +18,12 @@ CREATE TABLE profesor (
   telefono VARCHAR(255),
   email VARCHAR(255),
   contra VARCHAR(255)
+);
+CREATE TABLE curso (
+  id_curso SERIAL PRIMARY KEY,
+  nombre VARCHAR(255) NOT NULL,
+  descripcion VARCHAR(255),
+  dni_profesor VARCHAR(255) REFERENCES profesor(dni)
 );
 
 CREATE TABLE estudiante_curso (
@@ -83,3 +83,11 @@ VALUES
 ('21200281', 1),
 ('21200300', 1),
 ('22200078', 1);
+
+-- Insert para la tabla profesor
+INSERT INTO profesor (dni, nombre, apellido_pat, apellido_mat, telefono, email, contra)
+VALUES ('06147737', 'HUGO FROILAN', 'VEGA', 'HUERTA', '951841321', 'hvegah@unmsm.edu.pe', '06147737');
+
+-- Insert para la tabla curso
+INSERT INTO curso (nombre, descripcion, dni_profesor)
+VALUES ('IHC', 'Interaccion hombre computador', '06147737');
