@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { API_URL } from '../config';
 import '../styles/MisReclamos.css';
 import axios from 'axios';
-import { Card, CardContent, Typography, Button, TextField, Modal } from '@mui/material';
+import { Button, Card, CardContent, Typography, FormControl, InputLabel, Select, MenuItem, Modal,TextField } from '@mui/material';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const MisReclamos = () => {
@@ -16,6 +16,8 @@ const MisReclamos = () => {
   const [profesorSeleccionado, setProfesorSeleccionado] = useState(null);
   const [mostrarModal, setMostrarModal] = useState(false);
   const [profesores, setProfesores] = useState([]);
+  const [filtroEstado, setFiltroEstado] = useState('todos');
+  const [ordenacion, setOrdenacion] = useState('nuevosPrimero');
 
   const fetchProfesores = async () => {
     try {
@@ -111,25 +113,69 @@ const MisReclamos = () => {
   };
 
   const reclamosOrdenados = reclamos.slice().sort((a, b) => {
-    // Convertir las fechas a objetos Date para comparar
-    const dateA = new Date(a.fecha_ejecucion);
-    const dateB = new Date(b.fecha_ejecucion);
-  
-    // Ordenar de forma descendente (el más reciente primero)
-    return dateB - dateA;
+    if (ordenacion === 'nuevosPrimero') {
+      return new Date(b.fecha_ejecucion) - new Date(a.fecha_ejecucion);
+    } else {
+      return new Date(a.fecha_ejecucion) - new Date(b.fecha_ejecucion);
+    }
+  });
+
+  const handleFiltroChange = (event) => {
+    setFiltroEstado(event.target.value);
+  };
+
+  const handleOrdenacionChange = (event) => {
+    setOrdenacion(event.target.value);
+  };
+
+  const reclamosFiltrados = reclamosOrdenados.filter((reclamo) => {
+    if (filtroEstado === 'todos') {
+      return true;
+    } else if (filtroEstado === 'resueltos') {
+      return reclamo.is_resuelto;
+    } else {
+      return !reclamo.is_resuelto;
+    }
   });
 
   return (
     <div className="contenedor-mis-reclamos container mt-4 d-flex justify-content-center align-items-center">
       <div className="w-75">
         <h1 className="titulo-mis-reclamos mb-4">Mis Reclamos</h1>
+        <FormControl variant="outlined" className="mb-3">
+          <InputLabel id="filtro-reclamos-label">Filtrar por estado</InputLabel>
+          <Select
+            labelId="filtro-reclamos-label"
+            id="filtro-reclamos"
+            value={filtroEstado}
+            onChange={handleFiltroChange}
+            label="Filtrar por estado"
+          >
+            <MenuItem value="todos">Todos</MenuItem>
+            <MenuItem value="resueltos">Resueltos</MenuItem>
+            <MenuItem value="no-resueltos">No Resueltos</MenuItem>
+          </Select>
+        </FormControl>
+        <FormControl variant="outlined">
+        <InputLabel id="ordenacion-reclamos-label">Ordenar por fecha</InputLabel>
+        <Select
+          labelId="ordenacion-reclamos-label"
+          id="ordenacion-reclamos"
+          value={ordenacion}
+          onChange={handleOrdenacionChange}
+          label="Ordenar por fecha"
+        >
+          <MenuItem value="nuevosPrimero">Más nuevos primero</MenuItem>
+          <MenuItem value="viejosPrimero">Más viejos primero</MenuItem>
+        </Select>
+      </FormControl>
 
         <Button variant="contained" color="primary" onClick={handlePresentarReclamo} className="mb-3">
           Presentar Reclamo
         </Button>
 
-        {Array.isArray(reclamosOrdenados) &&
-        reclamosOrdenados.map((reclamo) => (
+        {Array.isArray(reclamosFiltrados) &&
+        reclamosFiltrados.map((reclamo) => (
           <Card
             key={reclamo._id}
             className={`reclamo-card mb-3 ${reclamo.is_resuelto ? 'resuelto' : 'no-resuelto'}`}
@@ -205,4 +251,3 @@ const MisReclamos = () => {
 };
 
 export default MisReclamos;
-

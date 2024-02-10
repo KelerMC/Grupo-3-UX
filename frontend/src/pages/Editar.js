@@ -15,7 +15,7 @@ const Editar = () => {
     apellido_mat: '',
     telefono: '',
     email: '',
-    isDelegado: false,
+    is_delegado: false,
   });
 
   const [edicionHabilitada, setEdicionHabilitada] = useState(false);
@@ -26,7 +26,7 @@ const Editar = () => {
         const response = await fetch(`${API_URL}/estudiantes/${email}`);
         const data = await response.json();
         setEstudiante(data);
-        setEsDelegado(data.isDelegado);
+        setEsDelegado(data.is_delegado);
       } catch (error) {
         console.error('Error fetching student data:', error);
       }
@@ -45,7 +45,7 @@ const Editar = () => {
 
   const handleHabilitarEdicion = () => {
     // Verifica si el usuario es un delegado antes de habilitar la edición completa
-    if (estudiante.isDelegado) {
+    if (estudiante.is_delegado) {
       setEdicionHabilitada(true);
     } else {
       // Si no es un delegado, solo se habilita la edición del campo de teléfono

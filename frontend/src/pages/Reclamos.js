@@ -8,9 +8,14 @@ const Reclamos = () => {
   const [reclamos, setReclamos] = useState([]);
   const [selectedReclamo, setSelectedReclamo] = useState({});
   const [filtroEstado, setFiltroEstado] = useState('todos');
+  const [ordenacion, setOrdenacion] = useState('nuevosPrimero');
 
-  const ordenarReclamosPorFecha = (reclamosData) => {
-    return reclamosData.sort((a, b) => new Date(b.fecha_ejecucion) - new Date(a.fecha_ejecucion));
+  const ordenarReclamosPorFecha = (reclamosData, orden) => {
+    if (orden === 'nuevosPrimero') {
+      return reclamosData.sort((a, b) => new Date(b.fecha_ejecucion) - new Date(a.fecha_ejecucion));
+    } else {
+      return reclamosData.sort((a, b) => new Date(a.fecha_ejecucion) - new Date(b.fecha_ejecucion));
+    }
   };
 
   useEffect(() => {
@@ -18,7 +23,7 @@ const Reclamos = () => {
       try {
         const response = await fetch(`${API_URL}/reclamos`);
         const data = await response.json();
-        const reclamosOrdenados = ordenarReclamosPorFecha(data);
+        const reclamosOrdenados = ordenarReclamosPorFecha(data, ordenacion);
         setReclamos(reclamosOrdenados);        
       } catch (error) {
         console.error('Error fetching reclamos data:', error);
@@ -26,7 +31,7 @@ const Reclamos = () => {
     };
 
     fetchReclamos();
-  }, []);
+  }, [ordenacion]);
 
   const getColorByEstado = (is_resuelto) => {
     return is_resuelto ? 'green' : 'red';
@@ -38,6 +43,10 @@ const Reclamos = () => {
 
   const handleFiltroChange = (event) => {
     setFiltroEstado(event.target.value);
+  };
+
+  const handleOrdenacionChange = (event) => {
+    setOrdenacion(event.target.value);
   };
 
   const reclamosFiltrados = reclamos.filter((reclamo) => {
@@ -65,6 +74,19 @@ const Reclamos = () => {
           <MenuItem value="todos">Todos</MenuItem>
           <MenuItem value="resueltos">Resueltos</MenuItem>
           <MenuItem value="no-resueltos">No Resueltos</MenuItem>
+        </Select>
+      </FormControl>
+      <FormControl variant="outlined">
+        <InputLabel id="ordenacion-reclamos-label">Ordenar por fecha</InputLabel>
+        <Select
+          labelId="ordenacion-reclamos-label"
+          id="ordenacion-reclamos"
+          value={ordenacion}
+          onChange={handleOrdenacionChange}
+          label="Ordenar por fecha"
+        >
+          <MenuItem value="nuevosPrimero">Más nuevos primero</MenuItem>
+          <MenuItem value="viejosPrimero">Más viejos primero</MenuItem>
         </Select>
       </FormControl>
       {reclamosFiltrados.map((reclamo) => (

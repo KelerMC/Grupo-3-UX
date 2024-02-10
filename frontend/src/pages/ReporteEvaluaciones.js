@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { API_URL } from '../config';
-import { Card, CardContent, Typography, Button, TextField, Select, MenuItem } from '@mui/material';
+import { Card, CardContent, Typography, Select, MenuItem } from '@mui/material';
 import '../styles/ReporteEvaluaciones.css';
 
 const ReporteEvaluaciones = () => {
@@ -12,16 +12,8 @@ const ReporteEvaluaciones = () => {
     apellido_pat: '',
     apellido_mat: '',
     telefono: '',
-    email: '',
-    isDelegado: false,
-    nota_ec: 0,
-    nota_ef: 0,
-    nota_ep: 0,
-    promedio: 0,
+    email: '',    
   });
-
-  const [reclamo, setReclamo] = useState('');
-  const [mostrarCajaReclamo, setMostrarCajaReclamo] = useState(false);
 
   useEffect(() => {
     const fetchAlumno = async () => {
@@ -36,7 +28,6 @@ const ReporteEvaluaciones = () => {
 
     fetchAlumno();
   }, [email]);
-
 
   const [cursos, setCursos] = useState([]);
   const [notasCurso, setNotasCurso] = useState(null);
@@ -57,9 +48,9 @@ const ReporteEvaluaciones = () => {
 
   useEffect(() => {
     const fetchNotasCurso = async () => {
-      if (selectedCursoId) {
+      if (selectedCursoId && alumno.codigo) {
         try {
-          const response = await fetch(`${API_URL}/estudiantes/${alumno.codigo}/notas/${selectedCursoId}`);
+          const response = await fetch(`${API_URL}/cursosEst/${alumno.codigo}/${selectedCursoId}`);
           const data = await response.json();
           setNotasCurso(data);
         } catch (error) {
