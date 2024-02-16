@@ -2,9 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { API_URL } from '../config.js';
 import { Table, TableContainer, TableHead, TableRow, TableCell, TableBody, Paper, IconButton, Menu, MenuItem, Modal, Backdrop, Fade, TextField, Button } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import MicIcon from '@mui/icons-material/Mic';
+import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import '../styles/Asignaturas.css';
 
 const Asignaturas = () => {
+    const { transcript, resetTranscript } = useSpeechRecognition();
+    const [isListening, setIsListening] = useState(false);
+    const [campoActual, setCampoActual] = useState('');
     const [estudiantes, setEstudiantes] = useState([]);
     const [anchorEl, setAnchorEl] = useState(null);
     const [selectedStudent, setSelectedStudent] = useState(null);
@@ -17,24 +22,38 @@ const Asignaturas = () => {
     const cursoId = 1;
 
     useEffect(() => {
-      fetchStudentGrades();
-  }, []);
+        fetchStudentGrades();
+    }, []);
 
-  const fetchStudentGrades = async () => {
-    try {
-        const response = await fetch(`${API_URL}/estudiantes`);
-        const data = await response.json();
-        const estudiantesConNotas = await Promise.all(data.map(async (estudiante) => {
-            const notasResponse = await fetch(`${API_URL}/cursosEst/${estudiante.codigo}/${cursoId}`);
-            const notasData = await notasResponse.json();
-            return { ...estudiante, ...notasData };
-        }));
-        console.log('Estudiantes con notas:', estudiantesConNotas); // Imprimir los datos de los estudiantes con notas en la consola
-        setEstudiantes(estudiantesConNotas);
-    } catch (error) {
-        console.error('Error fetching estudiantes data:', error);
-    }
-  };
+    useEffect(() => {
+        if (transcript !== '') {
+            // Actualizar las notas dependiendo de qué campo se está llenando
+            if (campoActual === 'EC') {
+                setNotaEC(transcript);
+            } else if (campoActual === 'EF') {
+                setNotaEF(transcript);
+            } else if (campoActual === 'EP') {
+                setNotaEP(transcript);
+            }
+            resetTranscript();
+        }
+    }, [transcript, campoActual]);
+
+    const fetchStudentGrades = async () => {
+        try {
+            const response = await fetch(`${API_URL}/estudiantes`);
+            const data = await response.json();
+            const estudiantesConNotas = await Promise.all(data.map(async (estudiante) => {
+                const notasResponse = await fetch(`${API_URL}/cursosEst/${estudiante.codigo}/${cursoId}`);
+                const notasData = await notasResponse.json();
+                return { ...estudiante, ...notasData };
+            }));
+            console.log('Estudiantes con notas:', estudiantesConNotas); // Imprimir los datos de los estudiantes con notas en la consola
+            setEstudiantes(estudiantesConNotas);
+        } catch (error) {
+            console.error('Error fetching estudiantes data:', error);
+        }
+    };
   
     const handleOpenMenu = (event, student) => {
         if (event) {
@@ -75,46 +94,58 @@ const Asignaturas = () => {
     };
 
     const handleGuardarCalificacion = async () => {
-      try {
-          // Validar que las notas estén dentro del rango permitido (0 - 20)
-          if (
-              parseFloat(notaEC) >= 0 && parseFloat(notaEC) <= 20 &&
-              parseFloat(notaEF) >= 0 && parseFloat(notaEF) <= 20 &&
-              parseFloat(notaEP) >= 0 && parseFloat(notaEP) <= 20
-          ) {
-              // Realizar la solicitud al backend solo si las notas son válidas
-              const response = await fetch(`${API_URL}/cursosEst/${selectedStudent.codigo}/${cursoId}/editar-notas`, {
-                  method: 'PUT',
-                  headers: {
-                      'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify({
-                      nota_ec: parseFloat(notaEC) || 0,
-                      nota_ef: parseFloat(notaEF) || 0,
-                      nota_ep: parseFloat(notaEP) || 0,
-                  }),
-              });
-              if (response.ok) {
-                  alert("Notas actualizadas correctamente");
-              } else {
-                  alert('Error al actualizar las notas:', response.statusText);
-              }
-              fetchStudentGrades();
-              handleCloseModal();
-          } else {
-              alert('Por favor, asegúrese de ingresar notas válidas, el rango valido es de 0 a 20.');
-          }
-      } catch (error) {
-          console.error('Error al guardar o actualizar las notas:', error);
-      }
-  };
+        try {
+            // Validar que las notas estén dentro del rango permitido (0 - 20)
+            if (
+                parseFloat(notaEC) >= 0 && parseFloat(notaEC) <= 20 &&
+                parseFloat(notaEF) >= 0 && parseFloat(notaEF) <= 20 &&
+                parseFloat(notaEP) >= 0 && parseFloat(notaEP) <= 20
+            ) {
+                // Realizar la solicitud al backend solo si las notas son válidas
+                const response = await fetch(`${API_URL}/cursosEst/${selectedStudent.codigo}/${cursoId}/editar-notas`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        nota_ec: parseFloat(notaEC) || 0,
+                        nota_ef: parseFloat(notaEF) || 0,
+                        nota_ep: parseFloat(notaEP) || 0,
+                    }),
+                });
+                if (response.ok) {
+                    alert("Notas actualizadas correctamente");
+                } else {
+                    alert('Error al actualizar las notas:', response.statusText);
+                }
+                fetchStudentGrades();
+                handleCloseModal();
+            } else {
+                alert('Por favor, asegúrese de ingresar notas válidas, el rango válido es de 0 a 20.');
+            }
+        } catch (error) {
+            console.error('Error al guardar o actualizar las notas:', error);
+        }
+    }; 
   
-  
-
     const handleEditarNotas = () => {
         setEdicionHabilitada(true);
         handleOpenModal();
     };
+
+    const startListening = (campo) => {
+        setIsListening(true);
+        SpeechRecognition.startListening({
+            language: 'es-ES' // Especifica el idioma español (España)
+        });
+        setCampoActual(campo);
+    };
+    
+    const stopListening = () => {
+        setIsListening(false);
+        SpeechRecognition.stopListening();
+    };
+    
 
     return (
         <div className="contenedor-alumnos">
@@ -197,6 +228,9 @@ const Asignaturas = () => {
                             disabled={!edicionHabilitada && modoEdicion}
                             inputProps={{ maxLength: 2 }}
                         />
+                        <IconButton onClick={() => startListening('EC')}>
+                            <MicIcon />
+                        </IconButton>
                         <TextField
                             label="Nota EF"
                             value={notaEF}
@@ -204,6 +238,9 @@ const Asignaturas = () => {
                             disabled={!edicionHabilitada && modoEdicion}
                             inputProps={{ maxLength: 2 }}
                         />
+                        <IconButton onClick={() => startListening('EF')}>
+                            <MicIcon />
+                        </IconButton>
                         <TextField
                             label="Nota EP"
                             value={notaEP}
@@ -211,15 +248,20 @@ const Asignaturas = () => {
                             disabled={!edicionHabilitada && modoEdicion}
                             inputProps={{ maxLength: 2 }}
                         />
+                        <IconButton onClick={() => startListening('EP')}>
+                            <MicIcon />
+                        </IconButton>
                         <Button variant="contained" onClick={handleGuardarCalificacion}>
                             Guardar Calificación
+                        </Button>
+                        <Button variant="contained" onClick={handleCloseModal}>
+                            Cancelar
                         </Button>
                     </div>
                 </Fade>
             </Modal>
         </div>
     );
-
 };
 
 export default Asignaturas;

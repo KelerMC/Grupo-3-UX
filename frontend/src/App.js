@@ -17,7 +17,7 @@ import MisReclamos from "./pages/MisReclamos.js";
 import AgregarAlumno from "./pages/AgregarAlumno.js";
 import EditarDele from "./pages/EditarDele.js";
 import AgregarACursos from "./pages/AgregarACursos.js";
-
+import VozProbar from "./pages/VozProbar.js";
 function App() {
   return (
     <div className="App">
@@ -41,6 +41,7 @@ function App() {
           <Route path="/AgregarAlumno" element={<AgregarAlumno />} />
           <Route path="/EditarDele" element={<EditarDele />} />
           <Route path="/AgregarACurso" element={<AgregarACursos />} />
+          <Route path="/VozProbar" element={<VozProbar/>}/>
         </Routes>
       </Router>
     </div>    

@@ -1,0 +1,11 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Esto asegura que el contenedor se ajuste a la altura de la ventana */
+  }
+  
+  .voice-container {
+    /* Estilos para el contenedor interno */
+    text-align: center;
+  }
