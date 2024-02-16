@@ -5,11 +5,14 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import MicIcon from '@mui/icons-material/Mic';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import '../styles/Asignaturas.css';
+import wordsToNumbers from 'words-to-numbers';
 
 const Asignaturas = () => {
+    //voz
     const { transcript, resetTranscript } = useSpeechRecognition();
     const [isListening, setIsListening] = useState(false);
     const [campoActual, setCampoActual] = useState('');
+    //
     const [estudiantes, setEstudiantes] = useState([]);
     const [anchorEl, setAnchorEl] = useState(null);
     const [selectedStudent, setSelectedStudent] = useState(null);
@@ -26,14 +29,19 @@ const Asignaturas = () => {
     }, []);
 
     useEffect(() => {
-        if (transcript !== '') {
-            // Actualizar las notas dependiendo de qué campo se está llenando
-            if (campoActual === 'EC') {
-                setNotaEC(transcript);
-            } else if (campoActual === 'EF') {
-                setNotaEF(transcript);
-            } else if (campoActual === 'EP') {
-                setNotaEP(transcript);
+        if (transcript !== '') {            
+            const numberValue = parseInt(transcript);
+            console.log(transcript)
+            console.log(numberValue)
+            if (!isNaN(numberValue)) {
+                
+                if (campoActual === 'EC') {
+                    setNotaEC(numberValue);
+                } else if (campoActual === 'EF') {
+                    setNotaEF(numberValue);
+                } else if (campoActual === 'EP') {
+                    setNotaEP(numberValue);
+                }
             }
             resetTranscript();
         }
