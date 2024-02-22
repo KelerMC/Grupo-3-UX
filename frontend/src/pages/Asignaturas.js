@@ -82,35 +82,44 @@ const Asignaturas = () => {
             console.log('Transcripción:', transcript);
     
             if (!isNaN(transcript)) {
-                switch (campoActual) {
-                    case 'EC':
-                        setNotaEC(Number(transcript));
-                        handleNotaChange('EC', currentRowIndex, transcript);
-                        console.log('Nota EC:', Number(transcript));
-                        break;
-                    case 'EF':
-                        setNotaEF(Number(transcript));
-                        handleNotaChange('EF', currentRowIndex, transcript);
-                        console.log('Nota EF:', Number(transcript));
-                        break;
-                    case 'EP':
-                        setNotaEP(Number(transcript));
-                        handleNotaChange('EP', currentRowIndex, transcript);
-                        console.log('Nota EP:', Number(transcript));
-                        break;
+                const nota = Number(transcript);
+                if (nota >= 0 && nota <= 20) {
+                    switch (campoActual) {
+                        case 'EC':
+                            setNotaEC(nota);
+                            handleNotaChange('EC', currentRowIndex, nota);
+                            console.log('Nota EC:', nota);
+                            break;
+                        case 'EF':
+                            setNotaEF(nota);
+                            handleNotaChange('EF', currentRowIndex, nota);
+                            console.log('Nota EF:', nota);
+                            break;
+                        case 'EP':
+                            setNotaEP(nota);
+                            handleNotaChange('EP', currentRowIndex, nota);
+                            console.log('Nota EP:', nota);
+                            break;
+                    }
+                } else {
+                    // Si el número está fuera del rango válido, mostrar alerta y limpiar el transcript
+                    alert('Por favor, ingrese un número válido para la nota (0 a 20).');
+                    transcript = ''; // Establecer el transcript como una cadena vacía
+                    console.log('Número fuera del rango válido, limpiando transcript:', transcript);
+                    startContinuousListening(); // Reiniciar el reconocimiento de voz
                 }
             } else {
                 // Si el transcript no es un número, limpiar el transcript
                 transcript = ''; // Establecer el transcript como una cadena vacía
                 console.log('Transcript no es un número, limpiando transcript:', transcript);
-                startContinuousListening();
+                startContinuousListening(); // Reiniciar el reconocimiento de voz
             }
         };
         recognition.start();
         setRecognition(recognition);
     };
     
-
+    
     const stopContinuousListening = () => {
         if (recognition) {
             recognition.stop();
@@ -136,10 +145,14 @@ const Asignaturas = () => {
         setCurrentRowIndex(rowIndex);        
     };
 
+    const [currentEditingRowIndex, setCurrentEditingRowIndex] = useState(null);
+
     const handleNotaChange = (campo, rowIndex, value) => {
-        if (!isNaN(value)) {
+        const nota = parseFloat(value);
+    
+        if (!isNaN(nota) && nota >= 0 && nota <= 20) {
             const updatedEstudiantes = [...estudiantes];
-            updatedEstudiantes[rowIndex][`nota_${campo.toLowerCase()}`] = value;
+            updatedEstudiantes[rowIndex][`nota_${campo.toLowerCase()}`] = nota;
             setEstudiantes(updatedEstudiantes);
     
             let nextCampo = campo;
@@ -155,14 +168,20 @@ const Asignaturas = () => {
                 case 'EP':
                     nextCampo = 'EC';
                     nextRowIndex += 1;
-                    break;                
+                    break;
             }
     
             if (nextRowIndex >= estudiantes.length) {
                 nextRowIndex = 0;
                 nextCampo = 'EC';
-            }
-    
+                // Si es el último alumno en la última fila, mostrar un alert de completado                
+            }            
+            if (nextRowIndex === (estudiantes.length-23)) {
+                alert('Proceso de edición de notas completado');
+                setCurrentEditingRowIndex(null);
+                stopContinuousListening(); 
+                setReconocimientoActivo(false);
+            } 
             setCurrentRowIndex(nextRowIndex);
             setCampoActual(nextCampo);
     
@@ -170,11 +189,20 @@ const Asignaturas = () => {
             const promedio = calculatePromedio(updatedEstudiantes[rowIndex]);
             updatedEstudiantes[rowIndex]['promedio'] = promedio;
             setEstudiantes(updatedEstudiantes);
+    
+            // Si cambia de fila y no es la primera vez ni la última, enviar las notas al backend
+            if (currentEditingRowIndex !== null && currentEditingRowIndex !== nextRowIndex && currentEditingRowIndex !== estudiantes.length - 1) {
+                enviarNotasAlBackend(updatedEstudiantes[rowIndex]);
+            }
+    
+            if (currentEditingRowIndex !== nextRowIndex) {
+                setCurrentEditingRowIndex(nextRowIndex);
+            }
         } else {
-            alert('Por favor, ingrese un número válido para la nota.');
+            alert('Por favor, ingrese un número válido para la nota (entre 0 y 20).');
         }
     };
-    
+        
     const calculatePromedio = (estudiante) => {
         const notas = ['nota_ec', 'nota_ef', 'nota_ep'];
         let suma = 0;
@@ -184,6 +212,28 @@ const Asignaturas = () => {
         return (suma / notas.length).toFixed(2);
     };
     
+    const enviarNotasAlBackend = async (estudiante) => {
+        try {
+            const response = await fetch(`${API_URL}/cursosEst/${estudiante.codigo}/${cursoId}/editar-notas`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    nota_ec: parseFloat(estudiante.nota_ec) || 0,
+                    nota_ef: parseFloat(estudiante.nota_ef) || 0,
+                    nota_ep: parseFloat(estudiante.nota_ep) || 0,
+                }),
+            });
+            if (response.ok) {
+                console.log("Notas del estudiante enviadas correctamente al backend.");
+            } else {
+                console.error('Error al enviar las notas al backend:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error al enviar las notas al backend:', error);
+        }
+    };
     
     
     const handleGuardarCalificacion = async () => {
@@ -233,6 +283,7 @@ const Asignaturas = () => {
         setCurrentRowIndex(0);
         setCampoActual('EC');
         setReconocimientoActivo(true);
+        setCurrentEditingRowIndex(0); 
     };
 
     return (
@@ -260,7 +311,7 @@ const Asignaturas = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                {estudiantes.map((estudiante, index) => (
+                {estudiantes.slice(0, 5).map((estudiante, index) => (
                 <TableRow key={estudiante.codigo}>
                     <TableCell>{estudiante.codigo}</TableCell>
                     <TableCell>{estudiante.nombre}</TableCell>
