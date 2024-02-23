@@ -78,43 +78,55 @@ const Asignaturas = () => {
         recognition.continuous = true;
     
         recognition.onresult = (event) => {
-            let transcript = event.results[0][0].transcript;
+            let transcript = event.results[0][0].transcript.toLowerCase();
+    
             console.log('Transcripción:', transcript);
     
-            if (!isNaN(transcript)) {
+            if (transcript === 'abajo') {
+                const nextRowIndex = currentRowIndex + 1;
+                if (nextRowIndex < estudiantes.length) {
+                    setCurrentRowIndex(nextRowIndex);
+                    setCampoActual(campoActual); // Mantener la misma columna
+                }
+            } else if (transcript === 'arriba') {
+                const prevRowIndex = currentRowIndex - 1;
+                if (prevRowIndex >= 0) {
+                    setCurrentRowIndex(prevRowIndex);
+                    setCampoActual(campoActual); // Mantener la misma columna
+                }
+            } else if (transcript === 'derecha') {
+                let nextCampo = campoActual === 'EP' ? 'EC' : (campoActual === 'EC' ? 'EF' : 'EP');
+                setCampoActual(nextCampo);
+            } else if (transcript === 'izquierda') {
+                let nextCampo = campoActual === 'EC' ? 'EP' : (campoActual === 'EP' ? 'EF' : 'EC');
+                setCampoActual(nextCampo);
+            } else if (!isNaN(transcript)) {
                 const nota = Number(transcript);
                 if (nota >= 0 && nota <= 20) {
                     switch (campoActual) {
                         case 'EC':
                             setNotaEC(nota);
                             handleNotaChange('EC', currentRowIndex, nota);
-                            console.log('Nota EC:', nota);
                             break;
                         case 'EF':
                             setNotaEF(nota);
                             handleNotaChange('EF', currentRowIndex, nota);
-                            console.log('Nota EF:', nota);
                             break;
                         case 'EP':
                             setNotaEP(nota);
                             handleNotaChange('EP', currentRowIndex, nota);
-                            console.log('Nota EP:', nota);
                             break;
                     }
                 } else {
-                    // Si el número está fuera del rango válido, mostrar alerta y limpiar el transcript
                     alert('Por favor, ingrese un número válido para la nota (0 a 20).');
-                    transcript = ''; // Establecer el transcript como una cadena vacía
-                    console.log('Número fuera del rango válido, limpiando transcript:', transcript);
-                    startContinuousListening(); // Reiniciar el reconocimiento de voz
+                    startContinuousListening();
                 }
             } else {
-                // Si el transcript no es un número, limpiar el transcript
-                transcript = ''; // Establecer el transcript como una cadena vacía
-                console.log('Transcript no es un número, limpiando transcript:', transcript);
-                startContinuousListening(); // Reiniciar el reconocimiento de voz
+                alert('Comando no reconocido. Por favor, intente nuevamente.');
+                startContinuousListening();
             }
         };
+    
         recognition.start();
         setRecognition(recognition);
     };
@@ -147,13 +159,32 @@ const Asignaturas = () => {
 
     const [currentEditingRowIndex, setCurrentEditingRowIndex] = useState(null);
 
-    const handleNotaChange = (campo, rowIndex, value) => {
+    const [selectedRowIndex, setSelectedRowIndex] = useState(null);
+    const handleCellClick = (campo, rowIndex) => {
+        setCampoActual(campo);
+        setCurrentRowIndex(rowIndex);
+        setSelectedRowIndex(rowIndex); // Mantener el índice de la celda seleccionada
+    };    
+
+    const handleNotaChange = (campo, rowIndex, value, voz = false) => {
         const nota = parseFloat(value);
     
         if (!isNaN(nota) && nota >= 0 && nota <= 20) {
             const updatedEstudiantes = [...estudiantes];
             updatedEstudiantes[rowIndex][`nota_${campo.toLowerCase()}`] = nota;
             setEstudiantes(updatedEstudiantes);
+    
+            // Calcular el promedio actualizado
+            const promedio = calculatePromedio(updatedEstudiantes[rowIndex]);
+            updatedEstudiantes[rowIndex]['promedio'] = promedio;
+            setEstudiantes(updatedEstudiantes);
+    
+            
+            if (voz) {
+                enviarNotasAlBackend(updatedEstudiantes[rowIndex]);
+            } else {
+                enviarNotasAlBackend(updatedEstudiantes[rowIndex]); // Envía las notas al backend cada vez que se modifique manualmente
+            }
     
             let nextCampo = campo;
             let nextRowIndex = rowIndex;
@@ -174,43 +205,25 @@ const Asignaturas = () => {
             if (nextRowIndex >= estudiantes.length) {
                 nextRowIndex = 0;
                 nextCampo = 'EC';
-                // Si es el último alumno en la última fila, mostrar un alert de completado                
-            }            
-            if (nextRowIndex === (estudiantes.length-23)) {
-                alert('Proceso de edición de notas completado');
-                setCurrentEditingRowIndex(null);
-                stopContinuousListening(); 
-                setReconocimientoActivo(false);
-            } 
+            }
+    
             setCurrentRowIndex(nextRowIndex);
             setCampoActual(nextCampo);
-    
-            // Calcular el promedio actualizado
-            const promedio = calculatePromedio(updatedEstudiantes[rowIndex]);
-            updatedEstudiantes[rowIndex]['promedio'] = promedio;
-            setEstudiantes(updatedEstudiantes);
-    
-            // Si cambia de fila y no es la primera vez ni la última, enviar las notas al backend
-            if (currentEditingRowIndex !== null && currentEditingRowIndex !== nextRowIndex && currentEditingRowIndex !== estudiantes.length - 1) {
-                enviarNotasAlBackend(updatedEstudiantes[rowIndex]);
-            }
-    
-            if (currentEditingRowIndex !== nextRowIndex) {
-                setCurrentEditingRowIndex(nextRowIndex);
-            }
         } else {
             alert('Por favor, ingrese un número válido para la nota (entre 0 y 20).');
         }
     };
+    
         
     const calculatePromedio = (estudiante) => {
         const notas = ['nota_ec', 'nota_ef', 'nota_ep'];
         let suma = 0;
         notas.forEach(nota => {
-            suma += parseFloat(estudiante[nota]) || 0;
+            suma += parseInt(estudiante[nota]) || 0;
         });
-        return (suma / notas.length).toFixed(2);
+        return Math.round(suma / notas.length);
     };
+    
     
     const enviarNotasAlBackend = async (estudiante) => {
         try {
@@ -285,7 +298,7 @@ const Asignaturas = () => {
         setReconocimientoActivo(true);
         setCurrentEditingRowIndex(0); 
     };
-
+    
     return (
         <div className="contenedor-alumnos">
             <h1>Asignaturas</h1>
@@ -321,26 +334,29 @@ const Asignaturas = () => {
                     <TableCell>{estudiante.email}</TableCell>
                     <TableCell>{estudiante.is_delegado ? 'Sí' : 'No'}</TableCell>
                     <TableCell 
-                        className={campoActual === 'EC' && index === currentRowIndex ? 'current-cell' : ''}
-                        contentEditable={edicionHabilitada && modoEdicion}
-                        onBlur={(e) => handleNotaChange('EC', index, e.target.innerText)}
-                    >
-                        {estudiante.nota_ec}
-                    </TableCell>
-                    <TableCell 
-                        className={campoActual === 'EF' && index === currentRowIndex ? 'current-cell' : ''}
-                        contentEditable={edicionHabilitada && modoEdicion}
-                        onBlur={(e) => handleNotaChange('EF', index, e.target.innerText)}
-                    >
-                        {estudiante.nota_ef}
-                    </TableCell>
-                    <TableCell 
-                        className={campoActual === 'EP' && index === currentRowIndex ? 'current-cell' : ''}
-                        contentEditable={edicionHabilitada && modoEdicion}
-                        onBlur={(e) => handleNotaChange('EP', index, e.target.innerText)}
-                    >
-                        {estudiante.nota_ep}
-                    </TableCell>
+                            className={campoActual === 'EC' && index === currentRowIndex ? 'current-cell' : ''}
+                            contentEditable={edicionHabilitada && modoEdicion}
+                            onClick={() => handleCellClick('EC', index)}
+                            onBlur={(e) => handleNotaChange('EC', index, e.target.innerText)}
+                        >
+                            {estudiante.nota_ec}
+                        </TableCell>
+                        <TableCell 
+                            className={campoActual === 'EF' && index === currentRowIndex ? 'current-cell' : ''}
+                            contentEditable={edicionHabilitada && modoEdicion}
+                            onClick={() => handleCellClick('EF', index)}
+                            onBlur={(e) => handleNotaChange('EF', index, e.target.innerText)}
+                        >
+                            {estudiante.nota_ef}
+                        </TableCell>
+                        <TableCell 
+                            className={campoActual === 'EP' && index === currentRowIndex ? 'current-cell' : ''}
+                            contentEditable={edicionHabilitada && modoEdicion}
+                            onClick={() => handleCellClick('EP', index)}
+                            onBlur={(e) => handleNotaChange('EP', index, e.target.innerText)}
+                        >
+                            {estudiante.nota_ep}
+                        </TableCell>
                     <TableCell>{estudiante.promedio}</TableCell>
                     <TableCell>
                         <IconButton

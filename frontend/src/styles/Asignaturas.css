@@ -42,3 +42,6 @@
   .current-cell {
     background-color: yellow; /* Color de fondo para la celda actual */
 }
+.nota-baja {
+  color: red;
+}
