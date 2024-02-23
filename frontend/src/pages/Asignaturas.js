@@ -164,6 +164,11 @@ const Asignaturas = () => {
         setCampoActual(campo);
         setCurrentRowIndex(rowIndex);
         setSelectedRowIndex(rowIndex); // Mantener el índice de la celda seleccionada
+    };
+    const speak = (mensaje) => {
+        const synth = window.speechSynthesis;
+        const utterance = new SpeechSynthesisUtterance(mensaje);
+        synth.speak(utterance);
     };    
 
     const handleNotaChange = (campo, rowIndex, value, voz = false) => {
@@ -181,8 +186,12 @@ const Asignaturas = () => {
     
             
             if (voz) {
+                const mensajeVoz = nota >= 11 ? 'Aprobado' : 'Desaprobado';
+                speak(mensajeVoz);
                 enviarNotasAlBackend(updatedEstudiantes[rowIndex]);
             } else {
+                const mensajeVoz = nota >= 11 ? 'Aprobado' : 'Desaprobado';
+                speak(mensajeVoz);
                 enviarNotasAlBackend(updatedEstudiantes[rowIndex]); // Envía las notas al backend cada vez que se modifique manualmente
             }
     
