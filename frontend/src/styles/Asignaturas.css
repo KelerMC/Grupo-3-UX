@@ -43,5 +43,13 @@
     background-color: yellow; /* Color de fondo para la celda actual */
 }
 .nota-baja {
-  color: red;
+  color: red; /* Color de texto para notas menores o iguales a 10 */
+}
+
+.nota-media {
+  color: black; /* Color de texto para notas mayores a 10 y menores o iguales a 15 */
+}
+
+.nota-alta {
+  color: blue; /* Color de texto para notas mayores a 15 */
 }
