@@ -298,6 +298,17 @@ const Asignaturas = () => {
         setReconocimientoActivo(true);
         setCurrentEditingRowIndex(0); 
     };
+
+    const getClassByGrade = (nota) => {
+        if (nota < 11) {
+            return 'nota-baja';
+        } else if (nota >= 11 && nota <= 15) {
+            return 'nota-media';
+        } else {
+            return 'nota-alta';
+        }
+    };
+    
     
     return (
         <div className="contenedor-alumnos">
@@ -334,29 +345,40 @@ const Asignaturas = () => {
                     <TableCell>{estudiante.email}</TableCell>
                     <TableCell>{estudiante.is_delegado ? 'Sí' : 'No'}</TableCell>
                     <TableCell 
-                            className={campoActual === 'EC' && index === currentRowIndex ? 'current-cell' : ''}
-                            contentEditable={edicionHabilitada && modoEdicion}
-                            onClick={() => handleCellClick('EC', index)}
-                            onBlur={(e) => handleNotaChange('EC', index, e.target.innerText)}
-                        >
-                            {estudiante.nota_ec}
-                        </TableCell>
-                        <TableCell 
-                            className={campoActual === 'EF' && index === currentRowIndex ? 'current-cell' : ''}
-                            contentEditable={edicionHabilitada && modoEdicion}
-                            onClick={() => handleCellClick('EF', index)}
-                            onBlur={(e) => handleNotaChange('EF', index, e.target.innerText)}
-                        >
-                            {estudiante.nota_ef}
-                        </TableCell>
-                        <TableCell 
-                            className={campoActual === 'EP' && index === currentRowIndex ? 'current-cell' : ''}
-                            contentEditable={edicionHabilitada && modoEdicion}
-                            onClick={() => handleCellClick('EP', index)}
-                            onBlur={(e) => handleNotaChange('EP', index, e.target.innerText)}
-                        >
-                            {estudiante.nota_ep}
-                        </TableCell>
+    style={{
+        color: estudiante.nota_ec < 11 ? 'red' : estudiante.nota_ec <= 15 ? 'black' : 'blue',
+    }}
+    className={`${campoActual === 'EC' && index === currentRowIndex ? 'current-cell' : ''}`}
+    contentEditable={edicionHabilitada && modoEdicion}
+    onClick={() => handleCellClick('EC', index)}
+    onBlur={(e) => handleNotaChange('EC', index, e.target.innerText)}
+>
+    {estudiante.nota_ec}
+</TableCell>
+<TableCell 
+    style={{
+        color: estudiante.nota_ef < 11 ? 'red' : estudiante.nota_ef <= 15 ? 'black' : 'blue',
+    }}
+    className={`${campoActual === 'EF' && index === currentRowIndex ? 'current-cell' : ''}`}
+    contentEditable={edicionHabilitada && modoEdicion}
+    onClick={() => handleCellClick('EF', index)}
+    onBlur={(e) => handleNotaChange('EF', index, e.target.innerText)}
+>
+    {estudiante.nota_ef}
+</TableCell>
+<TableCell 
+    style={{
+        color: estudiante.nota_ep < 11 ? 'red' : estudiante.nota_ep <= 15 ? 'black' : 'blue',
+    }}
+    className={`${campoActual === 'EP' && index === currentRowIndex ? 'current-cell' : ''}`}
+    contentEditable={edicionHabilitada && modoEdicion}
+    onClick={() => handleCellClick('EP', index)}
+    onBlur={(e) => handleNotaChange('EP', index, e.target.innerText)}
+>
+    {estudiante.nota_ep}
+</TableCell>
+
+
                     <TableCell>{estudiante.promedio}</TableCell>
                     <TableCell>
                         <IconButton
