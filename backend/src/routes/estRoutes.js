@@ -4,6 +4,7 @@ const {estController} = require ('../controllers/estController')
 
 
 router.get('/', estController.getAll);
+router.get('/getFive', estController.getFive);
 router.get("/:email", estController.getEstudiante);
 router.post("/", estController.createEstudiante);
 router.put("/:email", estController.updateEstudiante);

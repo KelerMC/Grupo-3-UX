@@ -20,6 +20,9 @@ const Asignaturas = () => {
     const [recognition, setRecognition] = useState(null);
     const cursoId = 1;
 
+    const [currentEditingRowIndex, setCurrentEditingRowIndex] = useState(null);
+    const [selectedRowIndex, setSelectedRowIndex] = useState(null);
+
     useEffect(() => {
         fetchStudentGrades();
     }, []);
@@ -32,7 +35,7 @@ const Asignaturas = () => {
 
     const fetchStudentGrades = async () => {
         try {
-            const response = await fetch(`${API_URL}/estudiantes`);
+            const response = await fetch(`${API_URL}/estudiantes/getFive`);
             const data = await response.json();
             const estudiantesConNotas = await Promise.all(data.map(async (estudiante) => {
                 const notasResponse = await fetch(`${API_URL}/cursosEst/${estudiante.codigo}/${cursoId}`);
@@ -70,8 +73,8 @@ const Asignaturas = () => {
         } else {
             stopContinuousListening();
         }
-    }, [reconocimientoActivo]);
-
+    }, [reconocimientoActivo]);   
+        
     const startContinuousListening = () => {
         const recognition = new window.webkitSpeechRecognition();
         recognition.lang = 'es-ES';
@@ -81,8 +84,39 @@ const Asignaturas = () => {
             let transcript = event.results[0][0].transcript.toLowerCase();
     
             console.log('Transcripción:', transcript);
-    
-            if (transcript === 'abajo') {
+            if (transcript === 'ordenar promedio') {                
+                const sortedEstudiantes = [...estudiantes].sort((a, b) => {                    
+                    return a.promedio - b.promedio;                    
+                });
+                setEstudiantes(sortedEstudiantes);                                
+                startContinuousListening();
+            } 
+            
+            else if (transcript === 'ordenar promedio descendente') {                
+                const sortedEstudiantes = [...estudiantes].sort((a, b) => {                    
+                    return b.promedio - a.promedio;                    
+                });
+                setEstudiantes(sortedEstudiantes);                                
+                startContinuousListening();
+            }
+
+            else if (transcript === 'ordenar código') {                
+                const sortedEstudiantes = [...estudiantes].sort((a, b) => {                    
+                    return a.codigo.localeCompare(b.codigo);                    
+                });
+                setEstudiantes(sortedEstudiantes);                                
+                startContinuousListening();
+            }
+            
+            else if (transcript === 'ordenar código descendente') {
+                // Ordenar por código
+                const sortedEstudiantes = [...estudiantes].sort((a, b) => {                    
+                    return b.codigo.localeCompare(a.codigo);                    
+                });
+                setEstudiantes(sortedEstudiantes);
+                startContinuousListening();
+            }
+            else if (transcript === 'abajo') {
                 const nextRowIndex = currentRowIndex + 1;
                 if (nextRowIndex < estudiantes.length) {
                     setCurrentRowIndex(nextRowIndex);
@@ -117,6 +151,7 @@ const Asignaturas = () => {
                             handleNotaChange('EP', currentRowIndex, nota);
                             break;
                     }
+                    recognition.start();
                 } else {
                     alert('Por favor, ingrese un número válido para la nota (0 a 20).');
                     startContinuousListening();
@@ -125,12 +160,10 @@ const Asignaturas = () => {
                 alert('Comando no reconocido. Por favor, intente nuevamente.');
                 startContinuousListening();
             }
-        };
-    
+        };    
         recognition.start();
         setRecognition(recognition);
     };
-    
     
     const stopContinuousListening = () => {
         if (recognition) {
@@ -155,11 +188,7 @@ const Asignaturas = () => {
     const handleCalificar = (campo, rowIndex) => {
         setCampoActual(campo);
         setCurrentRowIndex(rowIndex);        
-    };
-
-    const [currentEditingRowIndex, setCurrentEditingRowIndex] = useState(null);
-
-    const [selectedRowIndex, setSelectedRowIndex] = useState(null);
+    };    
     const handleCellClick = (campo, rowIndex) => {
         setCampoActual(campo);
         setCurrentRowIndex(rowIndex);
@@ -344,7 +373,7 @@ const Asignaturas = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                {estudiantes.slice(0, 5).map((estudiante, index) => (
+                {estudiantes.map((estudiante, index) => (
                 <TableRow key={estudiante.codigo}>
                     <TableCell>{estudiante.codigo}</TableCell>
                     <TableCell>{estudiante.nombre}</TableCell>
@@ -354,40 +383,38 @@ const Asignaturas = () => {
                     <TableCell>{estudiante.email}</TableCell>
                     <TableCell>{estudiante.is_delegado ? 'Sí' : 'No'}</TableCell>
                     <TableCell 
-    style={{
-        color: estudiante.nota_ec < 11 ? 'red' : estudiante.nota_ec <= 15 ? 'black' : 'blue',
-    }}
-    className={`${campoActual === 'EC' && index === currentRowIndex ? 'current-cell' : ''}`}
-    contentEditable={edicionHabilitada && modoEdicion}
-    onClick={() => handleCellClick('EC', index)}
-    onBlur={(e) => handleNotaChange('EC', index, e.target.innerText)}
->
-    {estudiante.nota_ec}
-</TableCell>
-<TableCell 
-    style={{
-        color: estudiante.nota_ef < 11 ? 'red' : estudiante.nota_ef <= 15 ? 'black' : 'blue',
-    }}
-    className={`${campoActual === 'EF' && index === currentRowIndex ? 'current-cell' : ''}`}
-    contentEditable={edicionHabilitada && modoEdicion}
-    onClick={() => handleCellClick('EF', index)}
-    onBlur={(e) => handleNotaChange('EF', index, e.target.innerText)}
->
-    {estudiante.nota_ef}
-</TableCell>
-<TableCell 
-    style={{
-        color: estudiante.nota_ep < 11 ? 'red' : estudiante.nota_ep <= 15 ? 'black' : 'blue',
-    }}
-    className={`${campoActual === 'EP' && index === currentRowIndex ? 'current-cell' : ''}`}
-    contentEditable={edicionHabilitada && modoEdicion}
-    onClick={() => handleCellClick('EP', index)}
-    onBlur={(e) => handleNotaChange('EP', index, e.target.innerText)}
->
-    {estudiante.nota_ep}
-</TableCell>
-
-
+                        style={{
+                            color: estudiante.nota_ec < 11 ? 'red' : estudiante.nota_ec <= 15 ? 'black' : 'blue',
+                        }}
+                        className={`${campoActual === 'EC' && index === currentRowIndex ? 'current-cell' : ''}`}
+                        contentEditable={edicionHabilitada && modoEdicion}
+                        onClick={() => handleCellClick('EC', index)}
+                        onBlur={(e) => handleNotaChange('EC', index, e.target.innerText)}
+                    >
+                        {estudiante.nota_ec}
+                    </TableCell>
+                    <TableCell 
+                        style={{
+                            color: estudiante.nota_ef < 11 ? 'red' : estudiante.nota_ef <= 15 ? 'black' : 'blue',
+                        }}
+                        className={`${campoActual === 'EF' && index === currentRowIndex ? 'current-cell' : ''}`}
+                        contentEditable={edicionHabilitada && modoEdicion}
+                        onClick={() => handleCellClick('EF', index)}
+                        onBlur={(e) => handleNotaChange('EF', index, e.target.innerText)}
+                    >
+                        {estudiante.nota_ef}
+                    </TableCell>
+                    <TableCell 
+                        style={{
+                            color: estudiante.nota_ep < 11 ? 'red' : estudiante.nota_ep <= 15 ? 'black' : 'blue',
+                        }}
+                        className={`${campoActual === 'EP' && index === currentRowIndex ? 'current-cell' : ''}`}
+                        contentEditable={edicionHabilitada && modoEdicion}
+                        onClick={() => handleCellClick('EP', index)}
+                        onBlur={(e) => handleNotaChange('EP', index, e.target.innerText)}
+                    >
+                        {estudiante.nota_ep}
+                    </TableCell>
                     <TableCell>{estudiante.promedio}</TableCell>
                     <TableCell>
                         <IconButton
