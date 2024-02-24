@@ -150,8 +150,7 @@ const Asignaturas = () => {
                             setNotaEP(nota);
                             handleNotaChange('EP', currentRowIndex, nota);
                             break;
-                    }
-                    recognition.start();
+                    }                    
                 } else {
                     alert('Por favor, ingrese un número válido para la nota (0 a 20).');
                     startContinuousListening();
