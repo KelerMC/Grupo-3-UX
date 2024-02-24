@@ -23,6 +23,17 @@ module.exports.estController = {
     });
   },
 
+  getFive: (req, res) => {
+    db.query('SELECT * FROM estudiante LIMIT 5', (err, result) => {
+        if (err) {
+            console.error(err);
+            res.status(500).json({ error: 'Error en el controlador' });
+        } else {
+            res.json(result.rows);
+        }
+    });
+},
+
   createEstudiante: (req, res) => {
     const {
       codigo,
