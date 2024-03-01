@@ -2,8 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { API_URL } from '../config';
 import '../styles/MisReclamos.css';
 import axios from 'axios';
-import { Button, Card, CardContent, Typography, FormControl, InputLabel, Select, MenuItem, Modal,TextField } from '@mui/material';
+import {
+  Button,
+  Card,
+  CardContent,
+  Typography,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Modal,
+  TextField,
+  IconButton,
+} from '@mui/material';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { Mic as MicIcon } from '@mui/icons-material';
 
 const MisReclamos = () => {
   const email = localStorage.getItem('correo');
@@ -17,7 +30,7 @@ const MisReclamos = () => {
   const [mostrarModal, setMostrarModal] = useState(false);
   const [profesores, setProfesores] = useState([]);
   const [filtroEstado, setFiltroEstado] = useState('todos');
-  const [ordenacion, setOrdenacion] = useState('nuevosPrimero');
+  const [ordenacion, setOrdenacion] = useState('nuevosPrimero');  
 
   const fetchProfesores = async () => {
     try {
@@ -61,7 +74,10 @@ const MisReclamos = () => {
     }
   }, [codigoEstudiante]);
 
-  // Nuevo useEffect para actualizar la información del estudiante y la fecha
+  useEffect(() => {
+    iniciarReconocimientoVoz();
+  }, []);
+
   useEffect(() => {
     // Verificar que haya reclamos y que el estudiante esté disponible
     if (reclamos.length > 0 && estudiante !== null) {
@@ -81,7 +97,7 @@ const MisReclamos = () => {
       alert('Selecciona un profesor antes de enviar el reclamo');
       return;
     }
-
+  
     try {
       const response = await fetch(`${API_URL}/reclamos`, {
         method: 'POST',
@@ -90,11 +106,11 @@ const MisReclamos = () => {
         },
         body: JSON.stringify({
           estudiante_codigo: codigoEstudiante,
-          descripcion: reclamo,
+          descripcion: reclamo, // Utiliza el estado del reclamo directamente
           dni_profesor: profesorSeleccionado,
         }),
       });
-
+  
       if (response.ok) {
         alert('Reclamo enviado con éxito');
         setMostrarModal(false);
@@ -106,6 +122,7 @@ const MisReclamos = () => {
     }
     fetchReclamos();
   };
+  
 
   const formatFecha = (fechaISO) => {
     const date = new Date(fechaISO);    
@@ -138,6 +155,19 @@ const MisReclamos = () => {
     }
   });
 
+const iniciarReconocimientoVoz = () => {
+  const recognition = new window.webkitSpeechRecognition();
+  recognition.lang = 'es-ES';
+  recognition.continuous = false;
+
+  recognition.onresult = (event) => {
+    const transcript = event.results[0][0].transcript.toLowerCase();
+    setReclamo(transcript); // Actualiza el estado del reclamo directamente
+  };
+
+  recognition.start();
+};
+
   return (
     <div className="contenedor-mis-reclamos container mt-4 d-flex justify-content-center align-items-center">
       <div className="w-75">
@@ -157,42 +187,42 @@ const MisReclamos = () => {
           </Select>
         </FormControl>
         <FormControl variant="outlined">
-        <InputLabel id="ordenacion-reclamos-label">Ordenar por fecha</InputLabel>
-        <Select
-          labelId="ordenacion-reclamos-label"
-          id="ordenacion-reclamos"
-          value={ordenacion}
-          onChange={handleOrdenacionChange}
-          label="Ordenar por fecha"
-        >
-          <MenuItem value="nuevosPrimero">Más nuevos primero</MenuItem>
-          <MenuItem value="viejosPrimero">Más viejos primero</MenuItem>
-        </Select>
-      </FormControl>
+          <InputLabel id="ordenacion-reclamos-label">Ordenar por fecha</InputLabel>
+          <Select
+            labelId="ordenacion-reclamos-label"
+            id="ordenacion-reclamos"
+            value={ordenacion}
+            onChange={handleOrdenacionChange}
+            label="Ordenar por fecha"
+          >
+            <MenuItem value="nuevosPrimero">Más nuevos primero</MenuItem>
+            <MenuItem value="viejosPrimero">Más viejos primero</MenuItem>
+          </Select>
+        </FormControl>
 
         <Button variant="contained" color="primary" onClick={handlePresentarReclamo} className="mb-3">
           Presentar Reclamo
         </Button>
 
         {Array.isArray(reclamosFiltrados) &&
-        reclamosFiltrados.map((reclamo) => (
-          <Card
-            key={reclamo._id}
-            className={`reclamo-card mb-3 ${reclamo.is_resuelto ? 'resuelto' : 'no-resuelto'}`}
-          >
-            <CardContent>
-              <Typography variant="h6">
-                Estado del Reclamo: {reclamo.is_resuelto ? 'Resuelto' : 'No resuelto'}
-              </Typography>
-              <Typography>Fecha de Envio: {formatFecha(reclamo.fecha_ejecucion)}</Typography>
-              <Typography>Descripción: {reclamo.descripcion}</Typography>
-              <Typography>Respuesta del Profesor: {reclamo.respuesta || 'Sin respuesta'}</Typography>
-              {reclamo.respuesta && (
-                <Typography>Fecha de Respuesta: {formatFecha(reclamo.fecha_respuesta)}</Typography>
-              )}
-            </CardContent>
-          </Card>
-        ))}
+          reclamosFiltrados.map((reclamo) => (
+            <Card
+              key={reclamo._id}
+              className={`reclamo-card mb-3 ${reclamo.is_resuelto ? 'resuelto' : 'no-resuelto'}`}
+            >
+              <CardContent>
+                <Typography variant="h6">
+                  Estado del Reclamo: {reclamo.is_resuelto ? 'Resuelto' : 'No resuelto'}
+                </Typography>
+                <Typography>Fecha de Envio: {formatFecha(reclamo.fecha_ejecucion)}</Typography>
+                <Typography>Descripción: {reclamo.descripcion}</Typography>
+                <Typography>Respuesta del Profesor: {reclamo.respuesta || 'Sin respuesta'}</Typography>
+                {reclamo.respuesta && (
+                  <Typography>Fecha de Respuesta: {formatFecha(reclamo.fecha_respuesta)}</Typography>
+                )}
+              </CardContent>
+            </Card>
+          ))}
         {mostrarModal && (
           <Modal
             open={mostrarModal}
@@ -219,14 +249,18 @@ const MisReclamos = () => {
                 </select>
                 {mostrarCajaReclamo && (
                   <div className="reclamo-container">
-                    <TextField
-                      label="Descripción del Reclamo"
-                      multiline
-                      rows={4}
-                      value={reclamo}
-                      onChange={(e) => setReclamo(e.target.value)}
-                      className="mb-3 form-control"
-                    />
+<TextField
+  label="Descripción del Reclamo"
+  multiline
+  rows={4}
+  value={reclamo} // Utiliza el estado del reclamo aquí
+  onChange={(e) => setReclamo(e.target.value)}
+  className="mb-3 form-control"
+/>
+
+                    <IconButton onClick={iniciarReconocimientoVoz}>
+                      <MicIcon />
+                    </IconButton>
                     <Button
                       variant="contained"
                       color="primary"
