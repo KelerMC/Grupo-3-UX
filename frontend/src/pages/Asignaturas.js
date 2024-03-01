@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { API_URL } from '../config.js';
 import { Table, TableContainer, TableHead, TableRow, TableCell, TableBody, Paper, IconButton, Menu, MenuItem, Modal, Backdrop, Fade, TextField, Button } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import MicIcon from '@mui/icons-material/Mic';
 import '../styles/Asignaturas.css';
 
 const Asignaturas = () => {
@@ -74,17 +75,28 @@ const Asignaturas = () => {
             stopContinuousListening();
         }
     }, [reconocimientoActivo]);   
+
+    const [modoMovimiento, setModoMovimiento] = useState('horizontal');
         
-    const startContinuousListening = () => {
+    const startContinuousListening = (modoMovimiento) => {
         const recognition = new window.webkitSpeechRecognition();
         recognition.lang = 'es-ES';
-        recognition.continuous = true;
-    
+        recognition.continuous = true;        
         recognition.onresult = (event) => {
             let transcript = event.results[0][0].transcript.toLowerCase();
     
-            console.log('Transcripción:', transcript);
-            if (transcript === 'ordenar promedio') {                
+            console.log('Transcripción:', transcript);       
+            console.log(modoMovimiento)     
+    
+            if (transcript === 'horizontal') {
+                setModoMovimiento('horizontal');
+                startContinuousListening('horizontal');
+            }
+            else if (transcript === 'vertical') {
+                setModoMovimiento('vertical');
+                startContinuousListening('vertical');
+            } 
+            else if (transcript === 'ordenar promedio') {                
                 const sortedEstudiantes = [...estudiantes].sort((a, b) => {                    
                     return a.promedio - b.promedio;                    
                 });
@@ -134,9 +146,13 @@ const Asignaturas = () => {
             } else if (transcript === 'izquierda') {
                 let nextCampo = campoActual === 'EC' ? 'EP' : (campoActual === 'EP' ? 'EF' : 'EC');
                 setCampoActual(nextCampo);
-            } else if (!isNaN(transcript)) {
-                const nota = Number(transcript);
-                if (nota >= 0 && nota <= 20) {
+            }             
+            else if (!isNaN(transcript)) {
+            const nota = Number(transcript);
+            if (nota >= 0 && nota <= 20) {
+                // Verificamos si estamos en modo vertical y hay una fila seleccionada
+                if (modoMovimiento === 'vertical' && currentRowIndex !== -1) {                    
+                    // Guardar la nota en la columna actual y fila actual
                     switch (campoActual) {
                         case 'EC':
                             setNotaEC(nota);
@@ -150,19 +166,48 @@ const Asignaturas = () => {
                             setNotaEP(nota);
                             handleNotaChange('EP', currentRowIndex, nota);
                             break;
-                    }                    
+                        default:
+                            alert('Campo actual no válido.');
+                            break;
+                    }
+                    // Restablecer el índice de fila al principio de la fila seleccionada
+                    setCurrentRowIndex(selectedRowIndex);
                 } else {
-                    alert('Por favor, ingrese un número válido para la nota (0 a 20).');
-                    startContinuousListening();
+                    // En modo horizontal o sin fila seleccionada, manejar las notas como antes
+                    switch (campoActual) {
+                        case 'EC':
+                            setNotaEC(nota);
+                            handleNotaChange('EC', currentRowIndex, nota);
+                            break;
+                        case 'EF':
+                            setNotaEF(nota);
+                            handleNotaChange('EF', currentRowIndex, nota);
+                            break;
+                        case 'EP':
+                            setNotaEP(nota);
+                            handleNotaChange('EP', currentRowIndex, nota);
+                            break;
+                        default:
+                            alert('Campo actual no válido.');
+                            break;
+                    }
                 }
-            } else {
+            }
+        }
+        else if (transcript === 'vertical') {
+            // Movimiento vertical
+            let nextRowIndex = currentRowIndex + 1;
+            if (nextRowIndex < estudiantes.length) {
+                setCurrentRowIndex(nextRowIndex);
+            }            
+        } else {
                 alert('Comando no reconocido. Por favor, intente nuevamente.');
                 startContinuousListening();
             }
         };    
         recognition.start();
         setRecognition(recognition);
-    };
+    }
     
     const stopContinuousListening = () => {
         if (recognition) {
@@ -176,6 +221,7 @@ const Asignaturas = () => {
 
     const handleOpenModal = () => {
         setOpenModal(true);
+        setEdicionHabilitada(true);
     };
 
     const handleCloseModal = () => {
@@ -431,7 +477,7 @@ const Asignaturas = () => {
                             onClose={handleCloseMenu}
                             elevation={2}
                         >
-                            <MenuItem onClick={handleCalificar}>Calificar</MenuItem>
+                            <MenuItem onClick={handleOpenModal}>Calificar</MenuItem>
                             <MenuItem onClick={handleEditarNotas}>Editar Notas</MenuItem>
                         </Menu>
                     </TableCell>
