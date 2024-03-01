@@ -1,6 +1,6 @@
-const express = require('express');
-const router = express.Router();
+const express = require("express");
 const { contagiadosController } = require('../controllers/contagiadosController');
+const router = express.Router();
 
 // Endpoint para obtener todos los contagiados
 router.get('/contagiados', contagiadosController.getAllContagiados);

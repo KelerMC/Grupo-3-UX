@@ -1,6 +1,5 @@
 const db = require('../config/db');
-
-module.exports.cursoController = {
+module.exports.contagiadosController = {
   getAllContagiados: (req, res) => {
     db.query('SELECT * FROM Contagiados', (err, result) => {
       if (err) {
