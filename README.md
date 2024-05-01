@@ -1,7 +1,8 @@
-# Grupo-1-IHC
-- CONDOR MARIN JESUS ERNESTO
-- HIDALGO COCK JOAQUIN ENRIQUE
-- GUIA MUÑOZ WILFREDO
-- MODESTO CALIXTO, KELER
-- SOLIS GUTIERREZ, CESAR EDUARDO
-- VALLE DURAND MIGUEL ANGEL
+# Grupo-3-UX
+- León Robles, Illary Marcelo
+- Modesto Calixto,Keler
+- Ormeño Vasquez, Leonardo Franco 
+- Pérez Bazán, Eysen Christopher 
+- Ventura Ruiz, Jefferson Jesús 
+- Villar Arias, Angello Andre 
+
