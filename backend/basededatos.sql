@@ -86,4 +86,4 @@ VALUES ('06147737', 'HUGO FROILAN', 'VEGA', 'HUERTA', '951841321', 'hvegah@unmsm
 
 -- Insert para la tabla curso
 INSERT INTO curso (nombre, descripcion, dni_profesor)
-VALUES ('IHC', 'Interaccion hombre computador', '06147737');
+VALUES ('UX', 'Experiencia de usuario', '06147737');
