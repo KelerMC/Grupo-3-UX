@@ -1,11 +1,13 @@
 .contenedor-mis-reclamos {
-    text-align: center;
-    margin: 10px;
-    border: 2px solid gray;
-    margin-left: 400px;
+    max-width: 600px; /* Ancho máximo del contenedor */
+    margin: 100px 20px; /* Margen superior e inferior de 200px y margen izquierdo y derecho de 20px */
+    border: 1px solid gray;
     border-radius: 10px;
-    display: inline-block;    
+    margin-left: 200px;
+    display: block;
   }
+     
+  
   .reclamo-card {
     margin-top: 20px;
     width: 700px;
@@ -36,7 +38,7 @@
 .modal-content {
   background-color: #fff;
   border-radius: 20px;
-  border: 2px solid #000;
+  border:2px solid #000;
   padding: 20px;
   max-width: 500px;
   width: 100%;

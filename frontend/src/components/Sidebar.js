@@ -89,11 +89,7 @@ export default function Sidebar() {
                   <div id="icon">{<PersonSearchIcon />}</div>
                   <div id="title">Editar Estudiantes</div>
                 </li>
-                <li className="row" onClick={() => navigate('/AgregarACurso')}>
-                  <div id="icon">{<AddHomeIcon />}</div>
-                  <div id="title">Registrar en un curso</div>
-                </li>
-              </>
+                </>
             )}
           <li className="row" onClick={handleLogout}>
             <div id="icon">{<LogoutIcon />}</div>

@@ -169,7 +169,8 @@ const iniciarReconocimientoVoz = () => {
 };
 
   return (
-    <div className="contenedor-mis-reclamos container mt-4 d-flex justify-content-center align-items-center">
+    <div className="contenedor-mis-reclamos">
+      <center>
       <div className="w-75">
         <h1 className="titulo-mis-reclamos mb-4">Mis Reclamos</h1>
         <FormControl variant="outlined" className="mb-3">
@@ -280,6 +281,7 @@ const iniciarReconocimientoVoz = () => {
           </Modal>
         )}
       </div>
+      </center>
     </div>
   );
 };
