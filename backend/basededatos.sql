@@ -82,7 +82,7 @@ VALUES
 
 -- Insert para la tabla profesor
 INSERT INTO profesor (dni, nombre, apellido_pat, apellido_mat, telefono, email, contra)
-VALUES ('06147737', 'HUGO FROILAN', 'VEGA', 'HUERTA', '951841321', 'hvegah@unmsm.edu.pe', '06147737');
+VALUES ('06147737', 'IVAN CARLO', 'PETRLIK', 'AZABACHE', '951841321', 'ipetrlika@unmsm.edu.pe', '06147737');
 
 -- Insert para la tabla curso
 INSERT INTO curso (nombre, descripcion, dni_profesor)
